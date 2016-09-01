@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">VideoPlayer</string>
+    <string name="access_token">a9ccfecaeb8bfdbf9bfcf0f36694bdb3</string>
+    <string name="loading_video">loading</string>
+</resources>
