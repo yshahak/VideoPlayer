@@ -1,25 +1,21 @@
 package com.ysapps.videoplayer.activities;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
 import com.ysapps.videoplayer.R;
-import com.ysapps.videoplayer.Utils;
-import com.ysapps.videoplayer.VimeoPagerAdapter;
+import com.ysapps.videoplayer.adapters.CustomPagerAdapter;
+import com.ysapps.videoplayer.fragments.DownloadedFragment;
 
-import java.util.ArrayList;
-import java.util.Map;
+import static com.ysapps.videoplayer.fragments.DownloadedFragment.SHOW_FOLDER_CONTENT;
 
 public class MainActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
+    private ViewPager viewPager;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -30,18 +26,18 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         toolbar.setTitle("http://vimeo.com/");
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
-        viewPager.setAdapter(new VimeoPagerAdapter(getSupportFragmentManager()));
-        if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                == PackageManager.PERMISSION_GRANTED) {
-            Utils.getRootFolders(this);
-
-        } else {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 100);
-        }
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager.setAdapter(new CustomPagerAdapter(getSupportFragmentManager()));
 
     }
 
-
-
+    @Override
+    public void onBackPressed() {
+        if (DownloadedFragment.state == SHOW_FOLDER_CONTENT){
+            viewPager.setAdapter(new CustomPagerAdapter(getSupportFragmentManager()));
+            viewPager.setCurrentItem(1);
+        } else {
+            super.onBackPressed();
+        }
+    }
 }

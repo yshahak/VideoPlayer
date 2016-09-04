@@ -1,4 +1,4 @@
-package com.ysapps.videoplayer;
+package com.ysapps.videoplayer.adapters;
 
 import android.Manifest;
 import android.app.Activity;
@@ -25,6 +25,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.vimeo.networking.model.Video;
 import com.vimeo.networking.model.VideoList;
+import com.ysapps.videoplayer.R;
 import com.ysapps.videoplayer.activities.VimeoPlayerActivity;
 
 import java.lang.ref.WeakReference;
@@ -41,12 +42,12 @@ import static com.ysapps.videoplayer.activities.VimeoPlayerActivity.EXTRA_LINK;
  * Created by B.E.L on 01/09/2016.
  */
 
-public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
+public class RecyclerAdapterVimeo extends RecyclerView.Adapter<RecyclerAdapterVimeo.ViewHolder> {
 
     private VideoList videoList;
     private WeakReference<Activity> activityWeakReference;
 
-    public RecyclerAdapter(Activity activity, VideoList videoList) {
+    public RecyclerAdapterVimeo(Activity activity, VideoList videoList) {
         this.videoList = videoList;
         activityWeakReference = new WeakReference<>(activity);
     }
@@ -123,7 +124,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_video_vimeo, parent, false);
         return new ViewHolder(v);
     }
 

@@ -16,7 +16,7 @@ import com.vimeo.networking.callbacks.ModelCallback;
 import com.vimeo.networking.model.VideoList;
 import com.vimeo.networking.model.error.VimeoError;
 import com.ysapps.videoplayer.R;
-import com.ysapps.videoplayer.RecyclerAdapter;
+import com.ysapps.videoplayer.adapters.RecyclerAdapterVimeo;
 
 import static com.ysapps.videoplayer.activities.VimeoActivity.STAFF_PICKS_VIDEO_URI;
 
@@ -45,7 +45,7 @@ public class VimeoFragment extends Fragment {
                 // It's good practice to always make sure that the values the API sends us aren't null
                 if (videoList != null && videoList.data != null && !videoList.data.isEmpty()) {
                     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                    recyclerView.setAdapter(new RecyclerAdapter(getActivity(), videoList));
+                    recyclerView.setAdapter(new RecyclerAdapterVimeo(getActivity(), videoList));
 
                 }
             }

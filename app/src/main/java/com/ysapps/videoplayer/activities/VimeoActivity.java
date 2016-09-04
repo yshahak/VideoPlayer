@@ -13,7 +13,7 @@ import com.vimeo.networking.callbacks.ModelCallback;
 import com.vimeo.networking.model.VideoList;
 import com.vimeo.networking.model.error.VimeoError;
 import com.ysapps.videoplayer.R;
-import com.ysapps.videoplayer.RecyclerAdapter;
+import com.ysapps.videoplayer.adapters.RecyclerAdapterVimeo;
 
 public class VimeoActivity extends AppCompatActivity {
     public static final String STAFF_PICKS_VIDEO_URI = "/channels/927/videos"; // 927 == staffpicks
@@ -37,7 +37,7 @@ public class VimeoActivity extends AppCompatActivity {
                 // It's good practice to always make sure that the values the API sends us aren't null
                 if (videoList != null && videoList.data != null && !videoList.data.isEmpty()) {
                     recyclerView.setLayoutManager(new LinearLayoutManager(VimeoActivity.this));
-                    recyclerView.setAdapter(new RecyclerAdapter(VimeoActivity.this, videoList));
+                    recyclerView.setAdapter(new RecyclerAdapterVimeo(VimeoActivity.this, videoList));
 
                 }
             }

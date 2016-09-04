@@ -6,24 +6,32 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.util.SparseArray;
 
+import java.util.ArrayList;
+
 /**
  * Created by B.E.L on 01/09/2016.
  */
 
 public class Utils {
 
-    public static void getRootFolders(Context context) {
+    public static ArrayList<Folder> getRootFolders(Context context) {
 
 
         Log.d("TAG", "getRootFolders is called");
 
 
-        String[] VIDEO_PROJECTION = {
+        /*String[] VIDEO_PROJECTION = {
                 MediaStore.Video.Media.DATA,
                 MediaStore.Video.Media._ID,
                 MediaStore.Video.VideoColumns.BUCKET_ID,
+                MediaStore.Video.VideoColumns.BUCKET_DISPLAY_NAME};*/
+        String[] VIDEO_PROJECTION = {
+                MediaStore.Video.Media._ID,
+                MediaStore.Video.Media.DATA,
+                MediaStore.Video.Media.DISPLAY_NAME,
+                MediaStore.Video.Media.DURATION,
+                MediaStore.Video.VideoColumns.BUCKET_ID,
                 MediaStore.Video.VideoColumns.BUCKET_DISPLAY_NAME};
-
 
         /*
         * uri :  The URI, using the content:// scheme
@@ -34,55 +42,68 @@ public class Utils {
         * */
 
 
-        Cursor vidCsr = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, VIDEO_PROJECTION,
-                null, null, MediaStore.Video.VideoColumns.DATE_ADDED);
 
 
-        getMediaIdnName(context, vidCsr);
-
+        ArrayList<Folder> folders = new ArrayList<>();
+        Cursor vidCsr = context.getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, VIDEO_PROJECTION,
+                null, null, null);//MediaStore.Video.VideoColumns.DATE_ADDED
+        getMediaIdnName(folders, vidCsr);
+        Log.d("TAG", "video finish");
+        return folders;
 
     }
 
-    private static void getMediaIdnName(Context context, Cursor videoCsr ) {
-
-
+    private static ArrayList<Folder> getMediaIdnName(ArrayList<Folder> folders, Cursor videoCsr ) {
         // getting Bucket ID and Display Name Column number for both Images and Videos
 
-        int vidBucketIdCol = videoCsr.getColumnIndex(MediaStore.Video.VideoColumns.BUCKET_ID);
-        int vidBucketNameCol = videoCsr.getColumnIndex(MediaStore.Video.VideoColumns.BUCKET_DISPLAY_NAME);
-
+        int colId = 0;
+        int colData = 1;
+        int colDisplayName = 2;
+        int colDuration = 3;
+        int colBucketId = 4;
+        int colBucketDisplayName = 5;
 
         // Image and Video count as returned by Cursor
-        SparseArray<String> nameMap = new SparseArray<>();
-        SparseArray<Integer> counterMap = new SparseArray<>();
+        SparseArray<Folder> folderMap = new SparseArray<>();
         if (videoCsr.moveToFirst()) {
             do {
-                int vidBucketId = videoCsr.getInt(vidBucketIdCol);
-                String vidBucketName = videoCsr.getString(vidBucketNameCol);
-                nameMap.put(vidBucketId, vidBucketName);
-                Integer count = counterMap.get(vidBucketId);
-                count = (count == null) ? 1 : ++count;
-                counterMap.put(vidBucketId, count);
-                Log.d("TAG", "id: " + vidBucketId + ", bucketName: " + vidBucketName);
+                Video video = new Video(
+                        videoCsr.getString(colDisplayName),
+                        videoCsr.getInt(colId),
+                        videoCsr.getInt(colDuration));
+                int vidBucketId = videoCsr.getInt(colBucketId);
+                String vidBucketName = videoCsr.getString(colBucketDisplayName);
+                Folder folder = folderMap.get(vidBucketId);
+                if (folder == null) {
+                    folder = new Folder(vidBucketName, vidBucketId);
+                    folderMap.put(vidBucketId, folder);
+                }
+                folder.getVideos().add(video);
+
             } while (videoCsr.moveToNext());
         }
         videoCsr.close();
-        getMediaInFolder(context, nameMap, counterMap);
+        for (int i = 0; i < folderMap.size(); i++) {
+            folders.add(folderMap.valueAt(i));
+        }
+//        getMediaInFolder(context, folderMap, counterMap);
+        return folders;
     }
 
     private static void getMediaInFolder(Context context, SparseArray<String> map, SparseArray<Integer> counterMap) {
-        final String[] VIDEO_PROJECTION = { MediaStore.Video.Media.DATA,
+        final String[] VIDEO_PROJECTION = {
+                MediaStore.Video.Media.DATA,
                 MediaStore.Video.Media._ID,
                 MediaStore.Video.Media.DISPLAY_NAME,
                 MediaStore.Video.Media.DURATION};
 
         final String orderBy = MediaStore.Video.Media.DATE_TAKEN;
 
-        final String vselection = MediaStore.Video.VideoColumns.BUCKET_DISPLAY_NAME + "=?";
+        final String vselection = MediaStore.Video.VideoColumns.BUCKET_ID + "=?";
 
         for (int i = 0 ; i < map.size() ; i++){
             Integer bucketId = map.keyAt(i);
-            final String[] selectionArgs = { map.get(bucketId) };
+            final String[] selectionArgs = { bucketId.toString() };
 
             Cursor videocursor = context.getContentResolver().query(
                       MediaStore.Video.Media.EXTERNAL_CONTENT_URI
