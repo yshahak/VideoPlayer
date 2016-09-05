@@ -51,11 +51,11 @@ public class RecyclerAdapterVideoList extends RecyclerView.Adapter<RecyclerAdapt
                 if (view.equals(iconDelete)) {
 //                    itemView.getContext().getContentResolver().delete(video.getVideoUri(), null, null);
                     boolean deleted = Utils.deleteFile(video.getPathToFile());
-                    if (deleted){
+                    itemView.getContext().getContentResolver().delete(video.getVideoUri(), null, null);
+//                    if (deleted){
                         videos.remove(video);
                         notifyDataSetChanged();
-                    }
-                    itemView.getContext().getContentResolver().delete(video.getVideoUri(), null, null);
+//                    }
                 } else {
                     Intent intent = new Intent();
                     intent.setAction(Intent.ACTION_VIEW);

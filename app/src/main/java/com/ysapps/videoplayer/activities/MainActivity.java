@@ -10,6 +10,7 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -24,6 +25,8 @@ import java.io.File;
 import static com.ysapps.videoplayer.fragments.DownloadedFragment.SHOW_FOLDER_CONTENT;
 
 public class MainActivity extends AppCompatActivity {
+
+    public static final String KEY_ASK_EXTERNAL_PERMISSION = "keyExPermission";
     public final static int CODE_STORAGE_PERMISSION = 100;
     public static long downId;
     public static String pathId;
@@ -39,6 +42,16 @@ public class MainActivity extends AppCompatActivity {
         Log.d("path external", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath());
         registerReceiver(receiver, new IntentFilter(
                 DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+//        String url = "https://www.youtube.com/watch?v=_sLRnZmpvrc";
+//        File file = new File( Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "sLRnZmpvrc" + ".mp4");
+//        VGet v = null;
+//        try {
+//            v = new VGet(new URL(url), file);
+//        } catch (MalformedURLException e) {
+//            e.printStackTrace();
+//        }
+//        assert v != null;
+//        v.download();
     }
 
     @Override
@@ -68,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == CODE_STORAGE_PERMISSION){
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(KEY_ASK_EXTERNAL_PERMISSION, false).apply();
             viewPager.getAdapter().notifyDataSetChanged(); //it will refresh second fragment
         }
     }

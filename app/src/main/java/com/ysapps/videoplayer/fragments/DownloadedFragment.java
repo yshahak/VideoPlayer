@@ -3,9 +3,11 @@ package com.ysapps.videoplayer.fragments;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,6 +24,7 @@ import com.ysapps.videoplayer.adapters.RecyclerAdapterVideoList;
 import java.util.ArrayList;
 
 import static com.ysapps.videoplayer.activities.MainActivity.CODE_STORAGE_PERMISSION;
+import static com.ysapps.videoplayer.activities.MainActivity.KEY_ASK_EXTERNAL_PERMISSION;
 
 
 /**
@@ -53,12 +56,12 @@ public class DownloadedFragment extends Fragment {
         state = which;
         if (recyclerView != null) {
             if (which ==  SHOW_FOLDERS_GRID){
-                if (getActivity().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        == PackageManager.PERMISSION_GRANTED) {
+                boolean permission = ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+                if (permission) {
                     folders = Utils.getRootFolders(getContext());
                     recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
                     recyclerView.setAdapter(new RecyclerAdapterDownloads(folders, DownloadedFragment.this));
-                } else {
+                } else if (PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean(KEY_ASK_EXTERNAL_PERMISSION, true)) {
                     ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, CODE_STORAGE_PERMISSION);
                 }
             } else if(which == SHOW_FOLDER_CONTENT){
@@ -67,4 +70,6 @@ public class DownloadedFragment extends Fragment {
             }
         }
     }
+
+
 }

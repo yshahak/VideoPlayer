@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -17,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.vimeo.networking.model.Video;
@@ -34,7 +36,7 @@ import uk.breedrapps.vimeoextractor.OnVimeoExtractionListener;
 import uk.breedrapps.vimeoextractor.VimeoExtractor;
 import uk.breedrapps.vimeoextractor.VimeoVideo;
 
-import static com.ysapps.videoplayer.Utils.downloadFile;
+import static com.ysapps.videoplayer.activities.MainActivity.CODE_STORAGE_PERMISSION;
 import static com.ysapps.videoplayer.activities.VimeoPlayerActivity.EXTRA_LINK;
 
 /**
@@ -103,15 +105,17 @@ public class RecyclerAdapterVimeo extends RecyclerView.Adapter<RecyclerAdapterVi
             }
             VimeoVideo video = (VimeoVideo) spinner.getTag();
             if (video != null) {
-                if (view.getContext().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        == PackageManager.PERMISSION_GRANTED) {
+                boolean permission = ContextCompat.checkSelfPermission(itemView.getContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+                if (permission) {
                     Map<String, String> strems = video.getStreams();
-                    MainActivity.pathId = video.getTitle() + ".mp4";
-                    MainActivity.downId =  Utils.downloadFile(view.getContext(), video.getStreams().get(new ArrayList(strems.keySet()).get(i)), video.getTitle());
+                    MainActivity.pathId = video.getTitle().replaceAll("[.]", "") + ".mp4";
+                    MainActivity.downId =  Utils.downloadFile(view.getContext(), video.getStreams().get(new ArrayList(strems.keySet()).get(i)), MainActivity.pathId);
                 } else {
                     Activity activity = activityWeakReference.get();
                     if (activity != null) {
-                        ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 100);
+                        Toast.makeText(activity, "You need to allow writing to memory", Toast.LENGTH_SHORT).show();
+
+                        ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, CODE_STORAGE_PERMISSION);
                     }
                 }
             }

@@ -143,17 +143,17 @@ public class Utils {
 
     }
 
-    public static long downloadFile(Context context, String url, String title) {
-        Log.d("TAG", "donloading: " + title);
+    public static long downloadFile(Context context, String url, String fileName) {
+        Log.d("TAG", "downloading: " + fileName);
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-        request.setTitle(title);
+        request.setTitle(fileName);
         request.setDescription("Downloading from server");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             request.allowScanningByMediaScanner();
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         }
 //        request.addRequestHeader(EXTRA_PATH, title + ".mp4");
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, title + ".mp4");
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
         request.allowScanningByMediaScanner();
         DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
         return manager.enqueue(request);
@@ -163,6 +163,7 @@ public class Utils {
         File videofiles=new File(path);
         return videofiles.delete();
     }
+
 
 
 }

@@ -77,7 +77,7 @@ public class VimeoFragment extends Fragment {
             public void success() {
                 String accessToken = VimeoClient.getInstance().getVimeoAccount().getAccessToken();
                 setVimeoList(STAFF_PICKS_VIDEO_URI);
-                Log.d("TAG", accessToken);
+//                Log.d("TAG", accessToken);
             }
 
             @Override
