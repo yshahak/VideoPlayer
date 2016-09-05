@@ -21,6 +21,8 @@ import com.ysapps.videoplayer.adapters.RecyclerAdapterVideoList;
 
 import java.util.ArrayList;
 
+import static com.ysapps.videoplayer.activities.MainActivity.CODE_STORAGE_PERMISSION;
+
 
 /**
  * Created by B.E.L on 01/09/2016.
@@ -57,7 +59,7 @@ public class DownloadedFragment extends Fragment {
                     recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
                     recyclerView.setAdapter(new RecyclerAdapterDownloads(folders, DownloadedFragment.this));
                 } else {
-                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 100);
+                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, CODE_STORAGE_PERMISSION);
                 }
             } else if(which == SHOW_FOLDER_CONTENT){
                 recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

@@ -29,6 +29,14 @@ public class CustomPagerAdapter extends FragmentPagerAdapter {
     }
 
     @Override
+    public int getItemPosition(Object object) {
+        if (object instanceof DownloadedFragment){ //refresh this fregment
+            return POSITION_NONE;
+        }
+        return super.getItemPosition(object);
+    }
+
+    @Override
     public int getCount() {
         return 2;
     }

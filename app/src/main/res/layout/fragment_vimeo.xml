@@ -1,7 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.RecyclerView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/recycler"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8dp"/>
+    android:orientation="vertical"
+    tools:context="com.ysapps.videoplayer.activities.MainActivity">
+
+    <com.ysapps.videoplayer.CustomSearchView
+        android:id="@+id/searchview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="4dp"
+        android:background="@color/colorBlue"
+        android:focusable="false"
+        app:iconifiedByDefault="false"
+        app:queryBackground="@drawable/search_view_white_bg"
+        app:queryHint="@string/hint_search"
+        app:searchIcon="@drawable/search_activity_search_icon"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            android:id="@+id/progress_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_gravity="top|center_horizontal"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="8dp"/>
+
+    </FrameLayout>
+
+
+
+</LinearLayout>
+

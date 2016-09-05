@@ -159,6 +159,9 @@ public class RecyclerAdapterVimeo extends RecyclerView.Adapter<RecyclerAdapterVi
 
     @Override
     public int getItemCount() {
+        if (videoList == null){
+            return 0;
+        }
         return videoList.data.size();
     }
 
@@ -178,4 +181,8 @@ public class RecyclerAdapterVimeo extends RecyclerView.Adapter<RecyclerAdapterVi
         manager.enqueue(request);
     }
 
+    public void setVideoList(VideoList videoList) {
+        this.videoList = videoList;
+        notifyDataSetChanged();
+    }
 }
