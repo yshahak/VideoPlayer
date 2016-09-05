@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 import com.ysapps.videoplayer.R;
+import com.ysapps.videoplayer.Utils;
 import com.ysapps.videoplayer.Video;
 
 import java.util.ArrayList;
@@ -28,16 +29,18 @@ public class RecyclerAdapterVideoList extends RecyclerView.Adapter<RecyclerAdapt
         this.videos = videos;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener  {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         private TextView videoLabel, videoDuration;
-        private ImageView thumbnail;
+        private ImageView thumbnail, iconDelete;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            videoLabel = (TextView)itemView.findViewById(R.id.video_label);
-            videoDuration = (TextView)itemView.findViewById(R.id.video_duration);
-            thumbnail = (ImageView)itemView.findViewById(R.id.thumbnail);
+            videoLabel = (TextView) itemView.findViewById(R.id.video_label);
+            videoDuration = (TextView) itemView.findViewById(R.id.video_duration);
+            thumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
+            iconDelete = (ImageView) itemView.findViewById(R.id.icone_delete);
+            iconDelete.setOnClickListener(this);
             itemView.setOnClickListener(this);
         }
 
@@ -45,11 +48,22 @@ public class RecyclerAdapterVideoList extends RecyclerView.Adapter<RecyclerAdapt
         public void onClick(View view) {
             Video video = (Video) itemView.getTag();
             if (video != null) {
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_VIEW);
-                intent.setDataAndType(video.getVideoUri(), "video/mp4");
-                itemView.getContext().startActivity(intent);
+                if (view.equals(iconDelete)) {
+//                    itemView.getContext().getContentResolver().delete(video.getVideoUri(), null, null);
+                    boolean deleted = Utils.deleteFile(video.getPathToFile());
+                    if (deleted){
+                        videos.remove(video);
+                        notifyDataSetChanged();
+                    }
+                    itemView.getContext().getContentResolver().delete(video.getVideoUri(), null, null);
+                } else {
+                    Intent intent = new Intent();
+                    intent.setAction(Intent.ACTION_VIEW);
+                    intent.setDataAndType(video.getVideoUri(), "video/mp4");
+                    itemView.getContext().startActivity(intent);
+                }
             }
+
 
         }
 
@@ -82,8 +96,14 @@ public class RecyclerAdapterVideoList extends RecyclerView.Adapter<RecyclerAdapt
                         notifyDataSetChanged();
                     }
                 });
-        holder.videoLabel.setText(video.getVideoName());
-        holder.videoDuration.setText(String.format(Locale.getDefault(), "%02d:%02d", ((video.getVideoLength() / 1000) % 3600) / 60 ,video.getVideoLength() /1000 %  60));
+        boolean contain = video.getVideoName().contains(".mp4") || video.getVideoName().contains(".MP4");
+        String splitter = null;
+        if (contain) {
+            splitter = video.getVideoName().contains(".mp4") ? ".mp4" : "MP4";
+        }
+        String title = (contain ? video.getVideoName().split(splitter)[0] : video.getVideoName());
+        holder.videoLabel.setText(title);
+        holder.videoDuration.setText(String.format(Locale.getDefault(), "%02d:%02d", ((video.getVideoLength() / 1000) % 3600) / 60, video.getVideoLength() / 1000 % 60));
         holder.itemView.setTag(video);
 
     }
@@ -92,8 +112,6 @@ public class RecyclerAdapterVideoList extends RecyclerView.Adapter<RecyclerAdapt
     public int getItemCount() {
         return videos.size();
     }
-
-
 
 
 }

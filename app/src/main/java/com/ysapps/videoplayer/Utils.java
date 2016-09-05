@@ -1,11 +1,16 @@
 package com.ysapps.videoplayer;
 
+import android.app.DownloadManager;
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.util.SparseArray;
 
+import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -70,7 +75,8 @@ public class Utils {
                 Video video = new Video(
                         videoCsr.getString(colDisplayName),
                         videoCsr.getInt(colId),
-                        videoCsr.getInt(colDuration));
+                        videoCsr.getInt(colDuration),
+                        videoCsr.getString(colData));
                 int vidBucketId = videoCsr.getInt(colBucketId);
                 String vidBucketName = videoCsr.getString(colBucketDisplayName);
                 Folder folder = folderMap.get(vidBucketId);
@@ -135,13 +141,27 @@ public class Utils {
                 videocursor.close();
         }
 
+    }
 
+    public static long downloadFile(Context context, String url, String title) {
+        Log.d("TAG", "donloading: " + title);
+        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+        request.setTitle(title);
+        request.setDescription("Downloading from server");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            request.allowScanningByMediaScanner();
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        }
+//        request.addRequestHeader(EXTRA_PATH, title + ".mp4");
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, title + ".mp4");
+        request.allowScanningByMediaScanner();
+        DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+        return manager.enqueue(request);
+    }
 
-
-
-
-
-
+    public static boolean deleteFile(String path){
+        File videofiles=new File(path);
+        return videofiles.delete();
     }
 
 

@@ -14,13 +14,15 @@ public class Video {
     private int videoId;
     private int videoLength;
     private Uri videoUri;
+    private String pathToFile;
 
-    public Video(String videoName, int videoId, int videoLength) {
+    public Video(String videoName, int videoId, int videoLength, String pathToFile) {
         this.videoName = videoName;
         this.videoId = videoId;
         this.videoLength = videoLength;
         this.videoUri = ContentUris.withAppendedId(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, videoId);
-        Log.d("TAG", Integer.toString(videoLength));
+        this.pathToFile = pathToFile;
+        Log.d("pathToFile: ", pathToFile);
     }
 
     public String getVideoName() {
@@ -37,5 +39,9 @@ public class Video {
 
     public Uri getVideoUri() {
         return videoUri;
+    }
+
+    public String getPathToFile() {
+        return pathToFile;
     }
 }

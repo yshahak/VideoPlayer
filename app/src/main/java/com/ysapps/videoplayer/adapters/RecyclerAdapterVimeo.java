@@ -2,16 +2,12 @@ package com.ysapps.videoplayer.adapters;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -26,6 +22,8 @@ import com.squareup.picasso.Picasso;
 import com.vimeo.networking.model.Video;
 import com.vimeo.networking.model.VideoList;
 import com.ysapps.videoplayer.R;
+import com.ysapps.videoplayer.Utils;
+import com.ysapps.videoplayer.activities.MainActivity;
 import com.ysapps.videoplayer.activities.VimeoPlayerActivity;
 
 import java.lang.ref.WeakReference;
@@ -36,6 +34,7 @@ import uk.breedrapps.vimeoextractor.OnVimeoExtractionListener;
 import uk.breedrapps.vimeoextractor.VimeoExtractor;
 import uk.breedrapps.vimeoextractor.VimeoVideo;
 
+import static com.ysapps.videoplayer.Utils.downloadFile;
 import static com.ysapps.videoplayer.activities.VimeoPlayerActivity.EXTRA_LINK;
 
 /**
@@ -107,7 +106,8 @@ public class RecyclerAdapterVimeo extends RecyclerView.Adapter<RecyclerAdapterVi
                 if (view.getContext().checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         == PackageManager.PERMISSION_GRANTED) {
                     Map<String, String> strems = video.getStreams();
-                    downloadFile(view.getContext(), video.getStreams().get(new ArrayList(strems.keySet()).get(i)), video.getTitle());
+                    MainActivity.pathId = video.getTitle() + ".mp4";
+                    MainActivity.downId =  Utils.downloadFile(view.getContext(), video.getStreams().get(new ArrayList(strems.keySet()).get(i)), video.getTitle());
                 } else {
                     Activity activity = activityWeakReference.get();
                     if (activity != null) {
@@ -166,20 +166,7 @@ public class RecyclerAdapterVimeo extends RecyclerView.Adapter<RecyclerAdapterVi
     }
 
 
-    private void downloadFile(Context context, String url, String title) {
-        Log.d("TAG", "donloading: " + title);
-        DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-        request.setTitle(title);
-        request.setDescription("Downloading...");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            request.allowScanningByMediaScanner();
-            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        }
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, title + ".mp4");
 
-        DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-        manager.enqueue(request);
-    }
 
     public void setVideoList(VideoList videoList) {
         this.videoList = videoList;

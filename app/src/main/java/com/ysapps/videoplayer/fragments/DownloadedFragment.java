@@ -43,7 +43,7 @@ public class DownloadedFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_vimeo, container, false);
+        View view = inflater.inflate(R.layout.fragment_downlaods, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler);
         setRecyclerView(SHOW_FOLDERS_GRID, -1);
         return view;
