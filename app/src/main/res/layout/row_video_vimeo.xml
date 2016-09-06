@@ -17,14 +17,22 @@
         android:paddingLeft="8dp"
         android:orientation="vertical">
 
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:padding="9dp"
+            android:id="@+id/spinner_down"
+            android:background = "@drawable/bg_spinner"
+            android:layout_gravity="right"/>
 
-        <Spinner
+
+       <!-- <Spinner
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:padding="9dp"
             android:id="@+id/spinner_down"
             style="@style/SpinnerTheme"
-            android:layout_gravity="right"/>
+            android:layout_gravity="right"/>-->
 
         <TextView
             android:id="@+id/text_content"

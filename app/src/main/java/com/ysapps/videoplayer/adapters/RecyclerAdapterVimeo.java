@@ -2,21 +2,20 @@ package com.ysapps.videoplayer.adapters;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.TypedArray;
 import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -45,29 +44,34 @@ import static com.ysapps.videoplayer.activities.VimeoPlayerActivity.EXTRA_LINK;
 
 public class RecyclerAdapterVimeo extends RecyclerView.Adapter<RecyclerAdapterVimeo.ViewHolder> {
 
+    private final TypedArray ids;
     private VideoList videoList;
     private WeakReference<Activity> activityWeakReference;
 
     public RecyclerAdapterVimeo(Activity activity, VideoList videoList) {
         this.videoList = videoList;
         activityWeakReference = new WeakReference<>(activity);
+        ids = activity.getResources().obtainTypedArray(R.array.menu_ids);
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener
-            , View.OnTouchListener, AdapterView.OnItemSelectedListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
+             PopupMenu.OnMenuItemClickListener {
 
         ImageView thumbnail;
-        Spinner spinner;
+        ImageView spinner;
         TextView textView;
-        private boolean firstSpinnerClick = true;
+        PopupMenu popupMenu;
 
         public ViewHolder(View itemView) {
             super(itemView);
             thumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
-            spinner = (Spinner) itemView.findViewById(R.id.spinner_down);
+            spinner = (ImageView) itemView.findViewById(R.id.spinner_down);
             textView = (TextView) itemView.findViewById(R.id.text_content);
             itemView.setOnClickListener(this);
-            spinner.setOnTouchListener(this);
+            popupMenu = new PopupMenu(itemView.getContext(), spinner);
+            popupMenu.setOnMenuItemClickListener(this);
+            spinner.setOnClickListener(this);
+
         }
 
         @Override
@@ -79,50 +83,32 @@ public class RecyclerAdapterVimeo extends RecyclerView.Adapter<RecyclerAdapterVi
                     intent.putExtra(EXTRA_LINK, html);
                     itemView.getContext().startActivity(intent);
                 }
-            }
-
-        }
-
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (motionEvent.getAction() == MotionEvent.ACTION_DOWN && firstSpinnerClick) {
+            } else if (view.equals(spinner)){
                 VimeoVideo video = (VimeoVideo) spinner.getTag();
-                String[] array = video.getStreams().keySet().toArray(new String[video.getStreams().keySet().size()]);
-                final ArrayAdapter<String> adapter = new ArrayAdapter<>(view.getContext(), android.R.layout.simple_spinner_dropdown_item, array);
-                spinner.setAdapter(adapter);
-                spinner.performClick();
-                spinner.setOnItemSelectedListener(this);
-                return true;
+                showPopup(popupMenu, video);
             }
-            return false;
+
         }
 
         @Override
-        public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-            if (firstSpinnerClick){
-                firstSpinnerClick = false;
-                return;
-            }
+        public boolean onMenuItemClick(MenuItem item) {
+            Log.d("TAG", "item pos: " + item.getOrder());
             VimeoVideo video = (VimeoVideo) spinner.getTag();
             if (video != null) {
                 boolean permission = ContextCompat.checkSelfPermission(itemView.getContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
                 if (permission) {
                     Map<String, String> strems = video.getStreams();
                     MainActivity.pathId = video.getTitle().replaceAll("[.]", "") + ".mp4";
-                    MainActivity.downId =  Utils.downloadFile(view.getContext(), video.getStreams().get(new ArrayList(strems.keySet()).get(i)), MainActivity.pathId);
+                    MainActivity.downId =  Utils.downloadFile(itemView.getContext(), video.getStreams().get(new ArrayList(strems.keySet()).get(item.getOrder())), MainActivity.pathId);
                 } else {
                     Activity activity = activityWeakReference.get();
                     if (activity != null) {
                         Toast.makeText(activity, "You need to allow writing to memory", Toast.LENGTH_SHORT).show();
-
                         ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, CODE_STORAGE_PERMISSION);
                     }
                 }
             }
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> adapterView) {
+            return true;
         }
     }
 
@@ -134,7 +120,6 @@ public class RecyclerAdapterVimeo extends RecyclerView.Adapter<RecyclerAdapterVi
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        final Context context = holder.itemView.getContext();
         Video video = videoList.data.get(position); // just an example of getting the first video
         String html = video.embed != null ? video.embed.html : null;
         holder.itemView.setTag(html);
@@ -145,9 +130,6 @@ public class RecyclerAdapterVimeo extends RecyclerView.Adapter<RecyclerAdapterVi
         final String content = video.name;
         holder.textView.setText(content);
         String id = Uri.parse(video.uri).getLastPathSegment();
-        String[] array = {" "};
-        final ArrayAdapter<String> adapter = new ArrayAdapter<>(context, android.R.layout.simple_spinner_dropdown_item, array);
-        holder.spinner.setAdapter(adapter);
         VimeoExtractor.getInstance().fetchVideoWithIdentifier(id, null, new OnVimeoExtractionListener() {
             @Override
             public void onSuccess(VimeoVideo video) {
@@ -175,5 +157,15 @@ public class RecyclerAdapterVimeo extends RecyclerView.Adapter<RecyclerAdapterVi
     public void setVideoList(VideoList videoList) {
         this.videoList = videoList;
         notifyDataSetChanged();
+    }
+
+    private void showPopup(PopupMenu popupMenu, VimeoVideo video) {
+        String[] array = video.getStreams().keySet().toArray(new String[video.getStreams().keySet().size()]);
+        int id;
+        for (int i = 0 ; i < array.length ; i++){
+            id = ids.getResourceId(i, -1);
+            popupMenu.getMenu().add(R.id.menuGroup, id, i, array[i]);
+        }
+        popupMenu.show();
     }
 }

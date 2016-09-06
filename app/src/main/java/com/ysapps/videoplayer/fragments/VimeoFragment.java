@@ -34,6 +34,7 @@ public class VimeoFragment extends Fragment {
     public static final String STAFF_PICKS_VIDEO_URI = "/channels/927/videos"; // 927 == staffpicks
     public static final String SEARCH_VIDEO_URI = "videos?query=";
     private static final String ARG_SECTION_NUMBER = "section_number";
+    private retrofit2.Call<java.lang.Object> currentCall;
 
     private RecyclerView recyclerView;
     private Toolbar toolbar;
@@ -51,8 +52,6 @@ public class VimeoFragment extends Fragment {
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         progressBar = (ProgressBar)view.findViewById(R.id.progress_indicator);
-//        toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-//        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
         mSearchView = (CustomSearchView) view.findViewById(R.id.searchview);
         mSearchView.setWeakReference(new WeakReference<>(this));
         authenticateWithClientCredentials();
@@ -60,32 +59,38 @@ public class VimeoFragment extends Fragment {
     }
 
     private void authenticateWithClientCredentials() {
-        Configuration.Builder configBuilder =
-                new Configuration.Builder(
-                        "a9f0a34c28db401317819037c9c8ae3601b011f4",
-                        "C+bMDFPFNzsNTYnt9lkwUu1dQKxnLGg/imGiSjlrEbcj4mwZ0ZoDWz7HAw6bA3UlAm14/ud7YemwGD2mz66IqJJOrfUbtFGIvgpHWVsVDlop8yCE8yML2yPXI1b6RUKd",
-                        "public private",
-                        null,
-                        new AndroidGsonDeserializer()
-                       );
 //        String accessToken = getString(R.string.access_token);
 //        VimeoClient.initialize(new Configuration.Builder(accessToken).build());
-        VimeoClient.initialize(configBuilder.build());
+        try {
+            VimeoClient.getInstance();
+            setVimeoList(STAFF_PICKS_VIDEO_URI);
+        } catch (AssertionError e) {
+            Log.d("TAG", "vimeoClient is null");
+            Configuration.Builder configBuilder =
+                    new Configuration.Builder(
+                            "a9f0a34c28db401317819037c9c8ae3601b011f4",
+                            "C+bMDFPFNzsNTYnt9lkwUu1dQKxnLGg/imGiSjlrEbcj4mwZ0ZoDWz7HAw6bA3UlAm14/ud7YemwGD2mz66IqJJOrfUbtFGIvgpHWVsVDlop8yCE8yML2yPXI1b6RUKd",
+                            "public private",
+                            null,
+                            new AndroidGsonDeserializer()
+                    );
+            VimeoClient.initialize(configBuilder.build());
+            VimeoClient.getInstance().authorizeWithClientCredentialsGrant(new AuthCallback() {
+                @Override
+                public void success() {
+//                    String accessToken = VimeoClient.getInstance().getVimeoAccount().getAccessToken();
+                    setVimeoList(STAFF_PICKS_VIDEO_URI);
 
-        VimeoClient.getInstance().authorizeWithClientCredentialsGrant(new AuthCallback() {
-            @Override
-            public void success() {
-                String accessToken = VimeoClient.getInstance().getVimeoAccount().getAccessToken();
-                setVimeoList(STAFF_PICKS_VIDEO_URI);
-//                Log.d("TAG", accessToken);
-            }
+                }
 
-            @Override
-            public void failure(VimeoError error) {
-                String errorMessage = error.getDeveloperMessage();
-                Log.d("TAG", errorMessage);
-            }
-        });
+                @Override
+                public void failure(VimeoError error) {
+                    String errorMessage = error.getDeveloperMessage();
+                    Log.d("TAG", errorMessage);
+                }
+            });
+        }
+
     }
 
     public void setVimeoList(String query){
@@ -96,9 +101,13 @@ public class VimeoFragment extends Fragment {
         } else {
             recyclerView.setAdapter(new RecyclerAdapterVimeo(getActivity(), null));
         }
-        VimeoClient.getInstance().fetchNetworkContent(query, new ModelCallback<VideoList>(VideoList.class) {
+        if (currentCall != null) {
+            currentCall.cancel();
+        }
+        currentCall = VimeoClient.getInstance().fetchNetworkContent(query, new ModelCallback<VideoList>(VideoList.class) {
             @Override
             public void success(VideoList videoList) {
+                currentCall = null;
                 if (videoList != null && videoList.data != null && !videoList.data.isEmpty()) {
                     progressBar.setVisibility(View.GONE);
                     RecyclerAdapterVimeo adapterVimeo = (RecyclerAdapterVimeo) recyclerView.getAdapter();
@@ -113,8 +122,9 @@ public class VimeoFragment extends Fragment {
 
             @Override
             public void failure(VimeoError error) {
+                currentCall = null;
                 String errorMessage = error.getDeveloperMessage();
-                Log.d("TAG", errorMessage);
+                Log.d("TAG", "failure:" + errorMessage);
             }
         });
     }

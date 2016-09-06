@@ -93,11 +93,13 @@ public class MainActivity extends AppCompatActivity {
             if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
                 Long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
                 if (downloadId == downId){
+                    Log.d("TAG", "reciever got the doownload complete");
                     File file = new File( Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), pathId);
                     MediaScannerConnection.scanFile(getApplicationContext(), new String[]{
                                     file.getAbsolutePath()},
                             null, new MediaScannerConnection.OnScanCompletedListener() {
                                 public void onScanCompleted(String path, Uri uri) {
+                                    Log.d("TAG", "onScanCompleted: " + uri.toString());
                                     viewPager.getAdapter().notifyDataSetChanged(); //it will refresh second fragment
                                 }
 

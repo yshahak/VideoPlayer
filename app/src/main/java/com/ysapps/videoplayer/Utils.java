@@ -4,7 +4,6 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -53,7 +52,7 @@ public class Utils {
         Cursor vidCsr = context.getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, VIDEO_PROJECTION,
                 null, null, null);//MediaStore.Video.VideoColumns.DATE_ADDED
         getMediaIdnName(folders, vidCsr);
-        Log.d("TAG", "video finish");
+        Log.d("TAG", "video folders loading finished");
         return folders;
 
     }
@@ -148,11 +147,8 @@ public class Utils {
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
         request.setTitle(fileName);
         request.setDescription("Downloading from server");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            request.allowScanningByMediaScanner();
-            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        }
-//        request.addRequestHeader(EXTRA_PATH, title + ".mp4");
+        request.allowScanningByMediaScanner();
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
         request.allowScanningByMediaScanner();
         DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
