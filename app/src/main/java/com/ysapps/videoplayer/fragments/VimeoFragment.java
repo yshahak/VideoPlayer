@@ -21,6 +21,7 @@ import com.vimeo.networking.model.error.VimeoError;
 import com.ysapps.videoplayer.AndroidGsonDeserializer;
 import com.ysapps.videoplayer.CustomSearchView;
 import com.ysapps.videoplayer.R;
+import com.ysapps.videoplayer.Utils;
 import com.ysapps.videoplayer.adapters.RecyclerAdapterVimeo;
 
 import java.lang.ref.WeakReference;
@@ -29,7 +30,7 @@ import java.lang.ref.WeakReference;
  * Created by B.E.L on 01/09/2016.
  */
 
-public class VimeoFragment extends Fragment {
+public class VimeoFragment extends Fragment implements View.OnClickListener {
 
     public static final String STAFF_PICKS_VIDEO_URI = "/channels/927/videos"; // 927 == staffpicks
     public static final String SEARCH_VIDEO_URI = "videos?query=";
@@ -40,6 +41,7 @@ public class VimeoFragment extends Fragment {
     private Toolbar toolbar;
     private CustomSearchView mSearchView;
     private ProgressBar progressBar;
+    private View noInternetContainer;
 
     public static VimeoFragment newInstance(int page){
         return new VimeoFragment();
@@ -54,8 +56,20 @@ public class VimeoFragment extends Fragment {
         progressBar = (ProgressBar)view.findViewById(R.id.progress_indicator);
         mSearchView = (CustomSearchView) view.findViewById(R.id.searchview);
         mSearchView.setWeakReference(new WeakReference<>(this));
-        authenticateWithClientCredentials();
+        noInternetContainer = view.findViewById(R.id.no_internet_container);
+        noInternetContainer.setOnClickListener(this);
+        setUi();
         return view;
+    }
+
+    private void setUi() {
+        boolean connected = Utils.isNetworkAvailable(getContext());
+        noInternetContainer.setVisibility(connected ? View.GONE : View.VISIBLE);
+        progressBar.setVisibility(connected ? View.VISIBLE : View.GONE);
+        recyclerView.setVisibility(connected ? View.VISIBLE : View.GONE);
+        if (connected) {
+            authenticateWithClientCredentials();
+        }
     }
 
     private void authenticateWithClientCredentials() {
@@ -127,6 +141,11 @@ public class VimeoFragment extends Fragment {
                 Log.d("TAG", "failure:" + errorMessage);
             }
         });
+    }
+
+    @Override
+    public void onClick(View view) {
+        setUi();
     }
 }
 

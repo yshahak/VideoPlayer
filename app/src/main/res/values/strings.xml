@@ -1,6 +1,10 @@
 <resources>
-    <string name="app_name">VideoPlayer</string>
+    <string name="app_name">VIDEO DOWNLOADER</string>
     <string name="access_token">a9ccfecaeb8bfdbf9bfcf0f36694bdb3</string>
     <string name="loading_video">loading</string>
     <string name="hint_search">Search for video</string>
+    <string name="splash_footer">Brought to you by BelMediaGroup</string>
+    <string name="menu_header_downloads">MY DOWNLOADS</string>
+    <string name="menu_delete_viedo">DELETE VIDEOS</string>
+    <string name="menu_header_about">ABOUT</string>
 </resources>

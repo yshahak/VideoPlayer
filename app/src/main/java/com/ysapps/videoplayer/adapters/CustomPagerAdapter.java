@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.ysapps.videoplayer.fragments.DownloadedFragment;
+import com.ysapps.videoplayer.fragments.FragmentMenu;
 import com.ysapps.videoplayer.fragments.VimeoFragment;
 
 /**
@@ -21,8 +22,10 @@ public class CustomPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position){
             case 0:
-                return VimeoFragment.newInstance(position);
+                return FragmentMenu.newInstance(position);
             case 1:
+                return VimeoFragment.newInstance(position);
+            case 2:
                 return DownloadedFragment.newInstance(position);
         }
         return null;
@@ -38,16 +41,18 @@ public class CustomPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 2;
+        return 3;
     }
 
     @Override
     public CharSequence getPageTitle(int position) {
         switch (position){
             case 0:
-                return "Vimeo";
+                return "MENU";
             case 1:
-                return "Downloads";
+                return "VIDEO";
+            case 2:
+                return "DOWNLOADS";
         }
         return null;
     }

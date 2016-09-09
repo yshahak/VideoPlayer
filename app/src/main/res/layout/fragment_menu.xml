@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/menu_headers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/menu_header_downloads" />
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="3dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:background="@android:color/black" />
+
+    <TextView
+        android:id="@+id/text_delete"
+        style="@style/menu_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        android:text="@string/menu_delete_viedo"
+        android:textColor="#000033"
+        android:textStyle="normal" />
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="3dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:background="@android:color/darker_gray" />
+
+    <TextView
+        android:id="@+id/textView"
+        style="@style/menu_headers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/menu_header_about" />
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="3dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:background="@android:color/black" />
+
+    <TextView
+        android:id="@+id/menu_content_help"
+        style="@style/menu_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="@string/menu_header_about"
+        android:textColor="#000033" />
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="3dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:background="@android:color/darker_gray" />
+
+    <TextView
+        android:id="@+id/menu_content_share"
+        style="@style/menu_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="@string/menu_header_about"
+        android:textColor="#000033" />
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="3dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:background="@android:color/darker_gray" />
+
+    <TextView
+        android:id="@+id/menu_content_rate"
+        style="@style/menu_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="@string/menu_header_about"
+        android:textColor="#000033" />
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="3dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:background="@android:color/darker_gray" />
+
+    <TextView
+        android:id="@+id/menu_content_report"
+        style="@style/menu_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="@string/menu_header_about"
+        android:textColor="#000033" />
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="3dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:background="@android:color/darker_gray" />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_gravity="center_horizontal"
+        android:src="@mipmap/ic_launcher"/>
+</LinearLayout>
