@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ysapps.videoplayer.R;
+import com.ysapps.videoplayer.activities.FeedbackActivity;
 import com.ysapps.videoplayer.activities.MainActivity;
 
 /**
@@ -39,16 +41,18 @@ public class FragmentMenu extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View root = inflater.inflate(R.layout.fragment_menu, container, false);
-        ((TextView) root.findViewById(R.id.menu_content_help))
-                .setText(Html.fromHtml(menuHelp));
+        TextView textViewHelp = ((TextView) root.findViewById(R.id.menu_content_help));
+        textViewHelp.setText(Html.fromHtml(menuHelp));
+        textViewHelp.setOnClickListener(this);
         TextView textViewShare = ((TextView) root.findViewById(R.id.menu_content_share));
         textViewShare.setText(Html.fromHtml(menuShare));
         textViewShare.setOnClickListener(this);
         TextView textViewRate = ((TextView) root.findViewById(R.id.menu_content_rate));
         textViewRate.setText(Html.fromHtml(menuRate));
         textViewRate.setOnClickListener(this);
-        ((TextView) root.findViewById(R.id.menu_content_report))
-                .setText(Html.fromHtml(menuReport));
+        TextView textViewReport = ((TextView) root.findViewById(R.id.menu_content_report));
+        textViewReport.setText(Html.fromHtml(menuReport));
+        textViewReport.setOnClickListener(this);
         TextView delete = (TextView) root.findViewById(R.id.text_delete);
         delete.setOnClickListener(this);
         return root;
@@ -66,7 +70,24 @@ public class FragmentMenu extends Fragment implements View.OnClickListener {
             case R.id.menu_content_rate:
                 rateApp();
                 break;
+            case R.id.menu_content_help:
+                showHelpDiaolog();
+                break;
+            case R.id.menu_content_report:
+                openReportActivity();
         }
+    }
+
+    private void openReportActivity() {
+        startActivity(new Intent(getContext(), FeedbackActivity.class));
+    }
+
+    private void showHelpDiaolog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Help");
+        builder.setMessage(getString(R.string.help));
+        builder.setPositiveButton("OK",null);
+        builder.show();
     }
 
     private void shareApp() {

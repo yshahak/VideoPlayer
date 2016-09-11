@@ -36,6 +36,8 @@
                   android:screenOrientation="landscape"
                   android:theme="@style/fullScreen"/>
 
+        <activity android:name=".activities.FeedbackActivity"/>
+
     </application>
 
 </manifest>

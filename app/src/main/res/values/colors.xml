@@ -6,5 +6,6 @@
     <color name="colorBlue">#2196F3</color>
     <color name="colorLightGrayBg">#E5E5E5</color>
     <color name="top_color">#333366</color>
+    <color name="colorLightGrayText">#CCCCCC</color>
 
 </resources>
