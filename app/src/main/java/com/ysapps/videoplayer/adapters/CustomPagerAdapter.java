@@ -4,7 +4,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.ysapps.videoplayer.fragments.DownloadedFragment;
+import com.ysapps.videoplayer.fragments.FragmentDownloaded;
 import com.ysapps.videoplayer.fragments.FragmentMenu;
 import com.ysapps.videoplayer.fragments.VimeoFragment;
 
@@ -26,14 +26,14 @@ public class CustomPagerAdapter extends FragmentPagerAdapter {
             case 1:
                 return VimeoFragment.newInstance(position);
             case 2:
-                return DownloadedFragment.newInstance(position);
+                return FragmentDownloaded.newInstance(position);
         }
         return null;
     }
 
     @Override
     public int getItemPosition(Object object) {
-        if (object instanceof DownloadedFragment){ //refresh this fregment
+        if (object instanceof FragmentDownloaded){ //refresh this fregment
             return POSITION_NONE;
         }
         return super.getItemPosition(object);

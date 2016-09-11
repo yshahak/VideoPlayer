@@ -1,4 +1,4 @@
-package com.ysapps.videoplayer;
+package com.ysapps.videoplayer.views;
 
 import android.app.Service;
 import android.content.Context;

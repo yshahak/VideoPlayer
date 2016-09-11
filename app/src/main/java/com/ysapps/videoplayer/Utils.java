@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.StatFs;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.util.SparseArray;
@@ -42,7 +43,8 @@ public class Utils {
                 MediaStore.Video.Media.DISPLAY_NAME,
                 MediaStore.Video.Media.DURATION,
                 MediaStore.Video.VideoColumns.BUCKET_ID,
-                MediaStore.Video.VideoColumns.BUCKET_DISPLAY_NAME};
+                MediaStore.Video.VideoColumns.BUCKET_DISPLAY_NAME,
+                MediaStore.Video.Media.SIZE};
 
         /*
         * uri :  The URI, using the content:// scheme
@@ -71,6 +73,7 @@ public class Utils {
         int colDuration = 3;
         int colBucketId = 4;
         int colBucketDisplayName = 5;
+        int colSize = 6;
 
         // Image and Video count as returned by Cursor
         SparseArray<Folder> folderMap = new SparseArray<>();
@@ -80,7 +83,8 @@ public class Utils {
                         videoCsr.getString(colDisplayName),
                         videoCsr.getInt(colId),
                         videoCsr.getInt(colDuration),
-                        videoCsr.getString(colData));
+                        videoCsr.getString(colData),
+                        formatSize(videoCsr.getLong(colSize)));
                 int vidBucketId = videoCsr.getInt(colBucketId);
                 String vidBucketName = videoCsr.getString(colBucketDisplayName);
                 Folder folder = folderMap.get(vidBucketId);
@@ -165,5 +169,89 @@ public class Utils {
         return videofiles.delete();
     }
 
+    /**
+     * @return Number of bytes available on internal storage
+     */
+    public static long getInternalAvailableSpace() {
+        long availableSpace = -1L;
+        try {StatFs stat = new StatFs(Environment.getDataDirectory()
+                .getPath());
+            stat.restat(Environment.getDataDirectory().getPath());
+            availableSpace = (long) stat.getAvailableBlocks() * (long) stat.getBlockSize();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return availableSpace;
+    }
+
+    private static boolean externalMemoryAvailable() {
+        return android.os.Environment.getExternalStorageState().equals(
+                android.os.Environment.MEDIA_MOUNTED);
+    }
+
+    public static long getAvailableInternalMemorySize() {
+        File path = Environment.getDataDirectory();
+        StatFs stat = new StatFs(path.getPath());
+        long blockSize = stat.getBlockSize();
+        long availableBlocks = stat.getAvailableBlocks();
+        return availableBlocks * blockSize;
+    }
+
+    public static long getTotalInternalMemorySize() {
+        File path = Environment.getDataDirectory();
+        StatFs stat = new StatFs(path.getPath());
+        long blockSize = stat.getBlockSize();
+        long totalBlocks = stat.getBlockCount();
+        return totalBlocks * blockSize;
+    }
+
+    public static long getAvailableExternalMemorySize() {
+        if (externalMemoryAvailable()) {
+            File path = Environment.getExternalStorageDirectory();
+            StatFs stat = new StatFs(path.getPath());
+            long blockSize = stat.getBlockSize();
+            long availableBlocks = stat.getAvailableBlocks();
+            return availableBlocks * blockSize;
+        } else {
+            return -1;
+        }
+    }
+
+    public static long getTotalExternalMemorySize() {
+        if (externalMemoryAvailable()) {
+            File path = Environment.getExternalStorageDirectory();
+            StatFs stat = new StatFs(path.getPath());
+            long blockSize = stat.getBlockSize();
+            long totalBlocks = stat.getBlockCount();
+            return totalBlocks * blockSize;
+        } else {
+            return -1;
+        }
+    }
+
+    private static String formatSize(long size) {
+        String suffix = null;
+
+        if (size >= 1024) {
+            suffix = "KB";
+            size /= 1024;
+            if (size >= 1024) {
+                suffix = "MB";
+                size /= 1024;
+            }
+        }
+
+        StringBuilder resultBuffer = new StringBuilder(Long.toString(size));
+
+        int commaOffset = resultBuffer.length() - 3;
+        while (commaOffset > 0) {
+            resultBuffer.insert(commaOffset, ',');
+            commaOffset -= 3;
+        }
+
+        if (suffix != null) resultBuffer.append(suffix);
+        return resultBuffer.toString();
+    }
 
 }

@@ -8,12 +8,12 @@ import android.widget.TextView;
 
 import com.ysapps.videoplayer.Folder;
 import com.ysapps.videoplayer.R;
-import com.ysapps.videoplayer.fragments.DownloadedFragment;
+import com.ysapps.videoplayer.fragments.FragmentDownloaded;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
-import static com.ysapps.videoplayer.fragments.DownloadedFragment.SHOW_FOLDER_CONTENT;
+import static com.ysapps.videoplayer.fragments.FragmentDownloaded.SHOW_FOLDER_CONTENT;
 
 /**
  * Created by B.E.L on 04/09/2016.
@@ -22,9 +22,9 @@ import static com.ysapps.videoplayer.fragments.DownloadedFragment.SHOW_FOLDER_CO
 public class RecyclerAdapterDownloads extends RecyclerView.Adapter<RecyclerAdapterDownloads.ViewHolder> {
 
     private ArrayList<Folder> folderList;
-    private WeakReference<DownloadedFragment> weakReference;
+    private WeakReference<FragmentDownloaded> weakReference;
 
-    public RecyclerAdapterDownloads(ArrayList<Folder> videoList, DownloadedFragment fragment) {
+    public RecyclerAdapterDownloads(ArrayList<Folder> videoList, FragmentDownloaded fragment) {
         this.folderList = videoList;
         this.weakReference = new WeakReference<>(fragment);
     }
@@ -43,7 +43,7 @@ public class RecyclerAdapterDownloads extends RecyclerView.Adapter<RecyclerAdapt
         public void onClick(View view) {
             Folder folder = (Folder) itemView.getTag();
             if (folder != null) {
-                DownloadedFragment fragment = weakReference.get();
+                FragmentDownloaded fragment = weakReference.get();
                 if (fragment != null) {
                     fragment.setRecyclerView(SHOW_FOLDER_CONTENT, folderList.indexOf(folder));
                 }

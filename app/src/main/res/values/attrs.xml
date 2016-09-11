@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CustomSeekBar">
+        <attr name="memory" format="enum">
+            <enum name="internal" value="0"/>
+            <enum name="external" value="1"/>
+        </attr>
+    </declare-styleable>
+</resources>

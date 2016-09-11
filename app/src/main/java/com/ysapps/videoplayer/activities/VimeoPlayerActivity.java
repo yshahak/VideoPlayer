@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.webkit.WebSettings;
 
-import com.ysapps.videoplayer.HTML5WebView;
+import com.ysapps.videoplayer.views.HTML5WebView;
 
 public class VimeoPlayerActivity extends AppCompatActivity {
     public static final String EXTRA_LINK = "extraLink";

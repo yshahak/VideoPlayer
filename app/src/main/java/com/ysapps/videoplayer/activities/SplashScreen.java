@@ -34,7 +34,7 @@ public class SplashScreen extends AppCompatActivity{
                 } else {
                     viewTreeObserver.removeOnGlobalLayoutListener(this);
                 }
-                new CountDownTimer(2000, 2000){
+                new CountDownTimer(1000, 1000){
                     @Override
                     public void onTick(long l) {
                     }

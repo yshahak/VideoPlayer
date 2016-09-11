@@ -21,9 +21,15 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activities.MainActivity">
+        <activity android:name=".activities.MainActivity"/>
 
-        </activity>
+        <activity android:name=".activities.DownloadDialogActivity"
+                  android:theme="@style/dialog_theme"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".activities.DeleteDialogActivity"
+                  android:theme="@style/dialog_theme"
+                  android:screenOrientation="portrait"/>
 
         <activity android:name=".activities.VimeoPlayerActivity"
                   android:screenOrientation="landscape"

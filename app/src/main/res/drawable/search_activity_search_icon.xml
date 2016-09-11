@@ -4,17 +4,15 @@
     <item >
         <shape android:shape="rectangle">
             <corners android:radius="8dp" />
+<!--
             <solid android:color="@color/colorBlue" />
+-->
         </shape>
     </item>
 
 
     <item
-        android:drawable="@drawable/ic_icon_search_glass"
-        android:bottom="12dp"
-        android:left="12dp"
-        android:right="12dp"
-        android:top="12dp"/>
+        android:drawable="@drawable/ic_search"/>
 
 
 </layer-list>

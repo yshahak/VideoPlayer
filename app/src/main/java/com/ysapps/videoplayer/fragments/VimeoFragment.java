@@ -19,7 +19,7 @@ import com.vimeo.networking.callbacks.ModelCallback;
 import com.vimeo.networking.model.VideoList;
 import com.vimeo.networking.model.error.VimeoError;
 import com.ysapps.videoplayer.AndroidGsonDeserializer;
-import com.ysapps.videoplayer.CustomSearchView;
+import com.ysapps.videoplayer.views.CustomSearchView;
 import com.ysapps.videoplayer.DividerItemDecoration;
 import com.ysapps.videoplayer.R;
 import com.ysapps.videoplayer.Utils;

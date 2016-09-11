@@ -22,16 +22,19 @@ import android.widget.TextView;
 
 import com.ysapps.videoplayer.R;
 import com.ysapps.videoplayer.adapters.CustomPagerAdapter;
-import com.ysapps.videoplayer.fragments.DownloadedFragment;
+import com.ysapps.videoplayer.fragments.FragmentDownloaded;
 
 import java.io.File;
 
-import static com.ysapps.videoplayer.fragments.DownloadedFragment.SHOW_FOLDER_CONTENT;
+import static com.ysapps.videoplayer.fragments.FragmentDownloaded.SHOW_FOLDERS_GRID;
+import static com.ysapps.videoplayer.fragments.FragmentDownloaded.SHOW_FOLDER_CONTENT;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final String KEY_ASK_EXTERNAL_PERMISSION = "keyExPermission";
     public final static int CODE_STORAGE_PERMISSION = 100;
+    public static final int CODE_REQUEST_DELETE = 200;
+
     public static long downId;
     public static String pathId;
     public ViewPager viewPager;
@@ -60,7 +63,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (DownloadedFragment.state == SHOW_FOLDER_CONTENT){
+        if (FragmentDownloaded.state == SHOW_FOLDER_CONTENT){
+            FragmentDownloaded.state = SHOW_FOLDERS_GRID;
             viewPager.getAdapter().notifyDataSetChanged(); //it will refresh second fragment
         } else {
             super.onBackPressed();
@@ -73,6 +77,18 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(receiver);
     }
 
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CODE_REQUEST_DELETE  ){
+            if (resultCode == RESULT_OK) {
+                viewPager.getAdapter().notifyDataSetChanged(); //it will refresh second fragment
+            } else {
+                FragmentDownloaded.removedVideo = null;
+            }
+        }
+    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

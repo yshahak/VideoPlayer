@@ -1,4 +1,4 @@
-package com.ysapps.videoplayer;
+package com.ysapps.videoplayer.views;
 
 import android.app.Activity;
 import android.content.Context;
@@ -18,6 +18,8 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
+
+import com.ysapps.videoplayer.R;
 
 /**
  * Created by B.E.L on 01/09/2016.

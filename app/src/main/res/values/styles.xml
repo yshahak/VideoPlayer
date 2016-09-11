@@ -7,10 +7,22 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:editTextColor">@android:color/white</item>
+        <item name="android:textColorHint">@android:color/white</item>
+        <item name="android:radioButtonStyle">@style/radioButtonStyle</item>
+
     </style>
 
     <style name="fullScreen" parent="AppTheme">
         <item name="android:windowFullscreen">true</item>
+    </style>
+
+    <style name="dialog_theme" parent="AppTheme">
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@color/download_dialog_bg</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowIsFloating">false</item>
     </style>
 
     <style name="SpinnerTheme" parent="android:Widget.Spinner">
@@ -49,4 +61,10 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="radioButtonStyle" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="android:colorPressedHighlight">@color/top_color</item>
+
+    </style>
+
+    <color name="download_dialog_bg">#88CCCCCC</color>
 </resources>

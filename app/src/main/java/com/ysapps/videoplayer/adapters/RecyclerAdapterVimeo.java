@@ -24,6 +24,7 @@ import com.vimeo.networking.model.Video;
 import com.vimeo.networking.model.VideoList;
 import com.ysapps.videoplayer.R;
 import com.ysapps.videoplayer.Utils;
+import com.ysapps.videoplayer.activities.DownloadDialogActivity;
 import com.ysapps.videoplayer.activities.MainActivity;
 import com.ysapps.videoplayer.activities.VimeoPlayerActivity;
 
@@ -90,10 +91,20 @@ public class RecyclerAdapterVimeo extends RecyclerView.Adapter<RecyclerAdapterVi
                 }
             } else if (view.equals(spinner)){
                 VimeoVideo video = (VimeoVideo) spinner.getTag();
-                showPopup(popupMenu, video);
+                String[] arrayKeys = video.getStreams().keySet().toArray(new String[video.getStreams().keySet().size()]);
+                String[] arrayValues = video.getStreams().values().toArray(new String[video.getStreams().keySet().size()]);
+
+                Intent intent = new Intent(view.getContext(), DownloadDialogActivity.class);
+                intent.putExtra(DownloadDialogActivity.EXTRA_VIDEOS_STREAMS_KEYS, arrayKeys);
+                intent.putExtra(DownloadDialogActivity.EXTRA_VIDEOS_STREAMS_LINKS, arrayValues);
+
+                intent.putExtra(DownloadDialogActivity.EXTRA_VIDEO_TITLE, video.getTitle().replaceAll("[.]", ""));
+                view.getContext().startActivity(intent);
             }
 
+
         }
+
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {

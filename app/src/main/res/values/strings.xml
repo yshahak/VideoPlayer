@@ -2,11 +2,17 @@
     <string name="app_name">VIDEO DOWNLOADER</string>
     <string name="access_token">a9ccfecaeb8bfdbf9bfcf0f36694bdb3</string>
     <string name="loading_video">loading</string>
-    <string name="hint_search">Search for video</string>
+    <string name="hint_search">Search…</string>
     <string name="vimeo_video_placeholder" translatable="false">Views:%1$d\nLikes:%2$d</string>
 
     <string name="splash_footer">Brought to you by BelMediaGroup</string>
     <string name="menu_header_downloads">MY DOWNLOADS</string>
     <string name="menu_delete_viedo">DELETE VIDEOS</string>
     <string name="menu_header_about">ABOUT</string>
+    <string name="save_video_as">SAVE VIDEO AS</string>
+    <string name="free_space_internal">Free space on internal memory</string>
+    <string name="free_space_sd">Free space on SD card</string>
+    <string name="delete_video">DELETE VIDEO</string>
+    <string name="are_you_sure">Are you sure you want to delete the file?</string>
+    <string name="delete_completed">FILE SUCCESSFULLY DELETED!</string>
 </resources>

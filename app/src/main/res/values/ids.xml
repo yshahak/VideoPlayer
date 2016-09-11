@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="menuGroup" type="id"/>
+    <item name="menu1" type="id"/>
+    <item name="menu2" type="id"/>
+    <item name="menu3" type="id"/>
+    <item name="menu4" type="id"/>
+    <item name="menu5" type="id"/>
     <array name="menu_ids">
-        <item name="menu1" type="id"/>
-        <item name="menu2" type="id"/>
-        <item name="menu3" type="id"/>
-        <item name="menu4" type="id"/>
-        <item name="menu5" type="id"/>
-        <item name="menu6" type="id"/>
+        <item>@id/menu1</item>
+        <item>@id/menu2</item>
+        <item>@id/menu3</item>
+        <item>@id/menu4</item>
+        <item>@id/menu5</item>
     </array>
 
 </resources>
