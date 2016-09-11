@@ -3,4 +3,6 @@
     <string name="access_token">a9ccfecaeb8bfdbf9bfcf0f36694bdb3</string>
     <string name="loading_video">loading</string>
     <string name="hint_search">Search for video</string>
+    <string name="vimeo_video_placeholder" translatable="false">Views:%1$d\nLikes:%2$d</string>
+
 </resources>

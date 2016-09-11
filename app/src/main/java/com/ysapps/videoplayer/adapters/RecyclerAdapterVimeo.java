@@ -29,6 +29,7 @@ import com.ysapps.videoplayer.activities.VimeoPlayerActivity;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Map;
 
 import uk.breedrapps.vimeoextractor.OnVimeoExtractionListener;
@@ -47,11 +48,13 @@ public class RecyclerAdapterVimeo extends RecyclerView.Adapter<RecyclerAdapterVi
     private final TypedArray ids;
     private VideoList videoList;
     private WeakReference<Activity> activityWeakReference;
+    private String contentPlaceHolder;
 
     public RecyclerAdapterVimeo(Activity activity, VideoList videoList) {
         this.videoList = videoList;
         activityWeakReference = new WeakReference<>(activity);
         ids = activity.getResources().obtainTypedArray(R.array.menu_ids);
+        contentPlaceHolder = activity.getString(R.string.vimeo_video_placeholder);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
@@ -59,14 +62,16 @@ public class RecyclerAdapterVimeo extends RecyclerView.Adapter<RecyclerAdapterVi
 
         ImageView thumbnail;
         ImageView spinner;
-        TextView textView;
+        TextView textViewContent, textViewLabel, videoLength;
         PopupMenu popupMenu;
 
         public ViewHolder(View itemView) {
             super(itemView);
             thumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
             spinner = (ImageView) itemView.findViewById(R.id.spinner_down);
-            textView = (TextView) itemView.findViewById(R.id.text_content);
+            textViewContent = (TextView) itemView.findViewById(R.id.text_content);
+            textViewLabel = (TextView)itemView.findViewById(R.id.text_label);
+            videoLength = (TextView)itemView.findViewById(R.id.video_duration);
             itemView.setOnClickListener(this);
             popupMenu = new PopupMenu(itemView.getContext(), spinner);
             popupMenu.setOnMenuItemClickListener(this);
@@ -126,9 +131,15 @@ public class RecyclerAdapterVimeo extends RecyclerView.Adapter<RecyclerAdapterVi
         String url = video.pictures.pictureForWidth(150).link;
         Picasso.with(holder.itemView.getContext())
                 .load(url)
+                .fit()
                 .into(holder.thumbnail);
-        final String content = video.name;
-        holder.textView.setText(content);
+        holder.textViewLabel.setText(video.name);
+        holder.textViewContent.setText(String.format(contentPlaceHolder, video.playCount(), video.likeCount()));
+
+//        holder.textViewContent.setText(content);
+        String length = String.format(Locale.getDefault(), "%02d:%02d",
+                ((video.duration ) % 3600) / 60, video.duration  % 60);
+        holder.videoLength.setText(length);
         String id = Uri.parse(video.uri).getLastPathSegment();
         VimeoExtractor.getInstance().fetchVideoWithIdentifier(id, null, new OnVimeoExtractionListener() {
             @Override

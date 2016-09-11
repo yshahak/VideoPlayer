@@ -20,6 +20,7 @@ import com.vimeo.networking.model.VideoList;
 import com.vimeo.networking.model.error.VimeoError;
 import com.ysapps.videoplayer.AndroidGsonDeserializer;
 import com.ysapps.videoplayer.CustomSearchView;
+import com.ysapps.videoplayer.DividerItemDecoration;
 import com.ysapps.videoplayer.R;
 import com.ysapps.videoplayer.adapters.RecyclerAdapterVimeo;
 
@@ -51,6 +52,8 @@ public class VimeoFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_vimeo, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+
         progressBar = (ProgressBar)view.findViewById(R.id.progress_indicator);
         mSearchView = (CustomSearchView) view.findViewById(R.id.searchview);
         mSearchView.setWeakReference(new WeakReference<>(this));

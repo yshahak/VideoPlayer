@@ -24,11 +24,6 @@ public class Utils {
         Log.d("TAG", "getRootFolders is called");
 
 
-        /*String[] VIDEO_PROJECTION = {
-                MediaStore.Video.Media.DATA,
-                MediaStore.Video.Media._ID,
-                MediaStore.Video.VideoColumns.BUCKET_ID,
-                MediaStore.Video.VideoColumns.BUCKET_DISPLAY_NAME};*/
         String[] VIDEO_PROJECTION = {
                 MediaStore.Video.Media._ID,
                 MediaStore.Video.Media.DATA,
@@ -36,17 +31,6 @@ public class Utils {
                 MediaStore.Video.Media.DURATION,
                 MediaStore.Video.VideoColumns.BUCKET_ID,
                 MediaStore.Video.VideoColumns.BUCKET_DISPLAY_NAME};
-
-        /*
-        * uri :  The URI, using the content:// scheme
-        * projection :  a list of which columns to return, Passing null will return all columns, which is inefficient
-        * selection:  Filter declaring which rows to return, formateed as an SQL WHERE clause
-        * selectionArgs:  You may include ?s in selection, which will be replaced by values from selectionArgs, in the order that they appear in the selection,
-        * sortOrder: How to order the rows, formatted as an SQL ORDER BY clause
-        * */
-
-
-
 
         ArrayList<Folder> folders = new ArrayList<>();
         Cursor vidCsr = context.getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, VIDEO_PROJECTION,

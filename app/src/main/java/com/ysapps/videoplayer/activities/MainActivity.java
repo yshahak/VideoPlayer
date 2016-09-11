@@ -42,16 +42,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d("path external", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath());
         registerReceiver(receiver, new IntentFilter(
                 DownloadManager.ACTION_DOWNLOAD_COMPLETE));
-//        String url = "https://www.youtube.com/watch?v=_sLRnZmpvrc";
-//        File file = new File( Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "sLRnZmpvrc" + ".mp4");
-//        VGet v = null;
-//        try {
-//            v = new VGet(new URL(url), file);
-//        } catch (MalformedURLException e) {
-//            e.printStackTrace();
-//        }
-//        assert v != null;
-//        v.download();
     }
 
     @Override
@@ -69,13 +59,6 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(receiver);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == CODE_STORAGE_PERMISSION){
-//            viewPager.getAdapter().notifyDataSetChanged(); //it will refresh second fragment
-//        }
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
