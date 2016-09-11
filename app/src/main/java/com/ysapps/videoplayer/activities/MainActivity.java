@@ -6,7 +6,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Typeface;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,13 +17,14 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.widget.TextView;
 
 import com.ysapps.videoplayer.R;
 import com.ysapps.videoplayer.adapters.CustomPagerAdapter;
 import com.ysapps.videoplayer.fragments.FragmentDownloaded;
 
 import java.io.File;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 import static com.ysapps.videoplayer.fragments.FragmentDownloaded.SHOW_FOLDERS_GRID;
 import static com.ysapps.videoplayer.fragments.FragmentDownloaded.SHOW_FOLDER_CONTENT;
@@ -48,9 +48,9 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         //noinspection ConstantConditions
         getSupportActionBar().setTitle(null);
-        Typeface myTypeface = Typeface.createFromAsset(getAssets(), "fonts/myriadprocond.otf");
-        TextView myTextView = (TextView)findViewById(R.id.tool_bar_title);
-        myTextView.setTypeface(myTypeface);
+//        Typeface myTypeface = Typeface.createFromAsset(getAssets(), "fonts/myriadprocond.otf");
+//        TextView myTextView = (TextView)findViewById(R.id.tool_bar_title);
+//        myTextView.setTypeface(myTypeface);
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         viewPager.setAdapter(new CustomPagerAdapter(getSupportFragmentManager()));
@@ -59,6 +59,11 @@ public class MainActivity extends AppCompatActivity {
         Log.d("path external", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath());
         registerReceiver(receiver, new IntentFilter(
                 DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
     @Override

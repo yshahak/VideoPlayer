@@ -17,6 +17,8 @@
         android:layout_margin="8dp"
         android:background="@color/top_color"
         android:gravity="left"
+        fontPath="fonts/myriadprocond.otf"
+        tools:ignore="MissingPrefix"
         android:maxLines="1"
         android:paddingBottom="8dp"
         android:paddingLeft="8dp"
@@ -30,6 +32,8 @@
         android:id="@+id/edit_text_file_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        fontPath="fonts/myriadprocond.otf"
+        tools:ignore="MissingPrefix"
         android:layout_gravity="center"
         android:textColor="@android:color/black"
         tools:text="Ain lo ma laasot kan"
@@ -41,6 +45,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="8dp"
+        fontPath="fonts/myriadprocond.otf"
+        tools:ignore="MissingPrefix"
         android:gravity="center"
         android:maxLines="1"
         android:text="@string/free_space_internal"
@@ -101,11 +107,6 @@
             android:onClick="onClick"
             android:src="@drawable/btn_cancel"/>
 
-      <!--  <View
-            android:layout_width="1dp"
-            android:layout_height="25dp"
-            android:layout_gravity="center"
-            android:background="@color/colorLightGrayBg"/>-->
 
 
         <ImageView

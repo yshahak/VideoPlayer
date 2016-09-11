@@ -67,4 +67,10 @@
     </style>
 
     <color name="download_dialog_bg">#88CCCCCC</color>
+
+    <style name="FontMyriadProBoldCondensed">
+        <!-- Custom Attr-->
+        <item name="fontPath">fonts/myriadprocond.otf</item>
+    </style>
+
 </resources>

@@ -1,6 +1,7 @@
 package com.ysapps.videoplayer.activities;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.os.Bundle;
@@ -19,6 +20,8 @@ import com.ysapps.videoplayer.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 import static com.ysapps.videoplayer.activities.MainActivity.CODE_STORAGE_PERMISSION;
 
@@ -97,4 +100,11 @@ public class DownloadDialogActivity extends AppCompatActivity implements View.On
         position = radioGroup.indexOfChild(radioGroup.findViewById(id));
         Log.d("TAG", arrayLinks.get(position));
     }
+
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
 }

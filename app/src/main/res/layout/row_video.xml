@@ -15,6 +15,8 @@
         android:id="@+id/video_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        fontPath="fonts/myriadprocond.otf"
+        tools:ignore="MissingPrefix"
         android:textColor="@color/top_color"
         android:textStyle="bold"
         android:gravity="center"

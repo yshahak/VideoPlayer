@@ -1,5 +1,6 @@
 package com.ysapps.videoplayer.activities;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +9,8 @@ import android.widget.TextView;
 
 import com.ysapps.videoplayer.R;
 import com.ysapps.videoplayer.Utils;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 import static com.ysapps.videoplayer.activities.DownloadDialogActivity.EXTRA_VIDEO_TITLE;
 
@@ -54,6 +57,13 @@ public class DeleteDialogActivity extends AppCompatActivity implements View.OnCl
             finish();
         }
     }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+
 
 
 }
