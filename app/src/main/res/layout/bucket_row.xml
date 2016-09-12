@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp">
+
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginTop="8dp"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/folder_icon"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="28dp"
+        android:orientation="vertical"
+        android:layout_gravity="center">
+
+        <TextView
+            android:id="@+id/folder_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:textColor="@android:color/black"
+            fontPath="fonts/MyriadPro-BoldCond.otf"
+            tools:ignore="MissingPrefix"
+            android:gravity="left"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            tools:text="download"/>
+
+        <TextView
+            android:id="@+id/folder_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:textColor="@android:color/black"
+            fontPath="fonts/MyriadPro-Cond.otf"
+            tools:ignore="MissingPrefix"
+            android:gravity="left"
+            android:textSize="15sp"
+            tools:text="15 videos"/>
+
+    </LinearLayout>
+
+
+
+</LinearLayout>

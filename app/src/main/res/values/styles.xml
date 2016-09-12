@@ -30,7 +30,7 @@
     </style>
 
     <style name="menu_headers">
-        <item name="android:textSize">15sp</item>
+        <item name="android:textSize">17sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">#000033</item>
         <item name="android:layout_gravity">left</item>
@@ -39,7 +39,7 @@
 
     <style name="menu_content" parent="menu_headers">
         <item name="android:layout_gravity">left</item>
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:textStyle">normal</item>
         <item name="android:paddingLeft">12dp</item>
         <item name="android:layout_margin">8dp</item>

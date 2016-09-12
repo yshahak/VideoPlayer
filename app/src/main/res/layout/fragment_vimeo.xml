@@ -18,10 +18,9 @@
 
         <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="25dp"
-            android:scaleType="fitXY"
+            android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:src="@drawable/videos_bar"/>
+            android:src="@drawable/video_bar"/>
 
         <View
             android:layout_width="0dp"

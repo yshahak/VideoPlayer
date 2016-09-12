@@ -30,18 +30,38 @@
 -keep interface com.squareup.okhttp.** { *; }
 -dontwarn com.squareup.okhttp.**
 -dontwarn okio.**
--dontwarn retrofit2.Platform$Java8
+#-dontwarn retrofit2.Platform$Java8
 
-# keep GsonSerializable interface, it would be thrown away by proguard since it is empty
--keep class com.ysapps.videoplayer.AndroidGsonDeserializer
+## BEGIN RETROFIT
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
+-keepattributes Signature
+-keepattributes Exceptions
+## END RETROFIT
 
-# member fields of serialized classes, including enums that implement this interface
--keepclassmembers class * implements com.vimeo.networking.GsonDeserializer {
-    <fields>;
-}
 
-# also keep names of these classes. not required, but just in case.
--keepnames class * implements com.vimeo.networking.GsonDeserializer
+## BEGIN VIMEO-NETWORKING
+-dontwarn javax.annotation.**
+-dontwarn javax.inject.**
+-dontwarn sun.misc.Unsafe
+## END VIMEO-NETWORKING
+
+
+## BEGIN GSON
+# Gson uses generic type information stored in a class file when working with fields. Proguard
+# removes such information by default, so configure it to keep all of it.
+-keepattributes Signature
+
+
+# Gson specific classes
+-keep class sun.misc.Unsafe { *; }
+-keep class com.google.gson.** { *; }
+
+# Application classes that will be serialized/deserialized over Gson
+-keep class com.vimeo.networking.** { *; }
+-keepclassmembers enum * { *; }
+
+## END GSONr
 
 # Fabric
 -keepattributes SourceFile,LineNumberTable,*Annotation*

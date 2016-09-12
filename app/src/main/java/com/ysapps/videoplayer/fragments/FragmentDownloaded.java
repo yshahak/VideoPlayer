@@ -8,11 +8,14 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
+import com.ysapps.videoplayer.DividerItemDecoration;
 import com.ysapps.videoplayer.Folder;
 import com.ysapps.videoplayer.R;
 import com.ysapps.videoplayer.Utils;
@@ -35,9 +38,11 @@ public class FragmentDownloaded extends Fragment {
     public static final int SHOW_FOLDER_CONTENT = 1;
     private ArrayList<Folder> folders;
     private RecyclerView recyclerView;
+    private ImageView recyclerLabel;
+
     public static int state = SHOW_FOLDERS_GRID;
     public static Video removedVideo;
-    private int lastIndex = -1;
+    private static int lastIndex = -1;
 
     public static FragmentDownloaded newInstance(int page){
         return new FragmentDownloaded();
@@ -48,7 +53,14 @@ public class FragmentDownloaded extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_downlaods, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler);
-        setRecyclerView(state, lastIndex);
+        recyclerLabel = (ImageView)view.findViewById(R.id.recycler_label);
+        boolean permission = ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        if (permission) {
+            folders = Utils.getRootFolders(getContext());
+            setRecyclerView(state, lastIndex);
+        } else {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, CODE_STORAGE_PERMISSION);
+        }
         return view;
     }
 
@@ -57,15 +69,12 @@ public class FragmentDownloaded extends Fragment {
         lastIndex = position;
         if (recyclerView != null) {
             if (which ==  SHOW_FOLDERS_GRID){
-                boolean permission = ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-                if (permission) {
-                    folders = Utils.getRootFolders(getContext());
-                    recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-                    recyclerView.setAdapter(new RecyclerAdapterDownloads(folders, FragmentDownloaded.this));
-                } else {
-                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, CODE_STORAGE_PERMISSION);
-                }
+                recyclerLabel.setImageResource(R.drawable.files_icon);
+                recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+                recyclerView.setAdapter(new RecyclerAdapterDownloads(folders, FragmentDownloaded.this));
             } else if(which == SHOW_FOLDER_CONTENT){
+                recyclerLabel.setImageResource(R.drawable.downlaod_bar);
                 recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 3));
                 if (removedVideo != null) {
                     folders.get(position).getVideos().remove(removedVideo);

@@ -21,21 +21,24 @@ import static com.ysapps.videoplayer.fragments.FragmentDownloaded.SHOW_FOLDER_CO
 
 public class RecyclerAdapterDownloads extends RecyclerView.Adapter<RecyclerAdapterDownloads.ViewHolder> {
 
+    private final String countPlaceHolder;
     private ArrayList<Folder> folderList;
     private WeakReference<FragmentDownloaded> weakReference;
 
     public RecyclerAdapterDownloads(ArrayList<Folder> videoList, FragmentDownloaded fragment) {
         this.folderList = videoList;
         this.weakReference = new WeakReference<>(fragment);
+        this.countPlaceHolder = fragment.getContext().getString(R.string.count_place_holder);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener  {
 
-        TextView folderLabel;
+        TextView folderLabel, folderCount;
 
         public ViewHolder(View itemView) {
             super(itemView);
             folderLabel = (TextView) itemView.findViewById(R.id.folder_label);
+            folderCount = (TextView)itemView.findViewById(R.id.folder_count);
             itemView.setOnClickListener(this);
         }
 
@@ -56,7 +59,7 @@ public class RecyclerAdapterDownloads extends RecyclerView.Adapter<RecyclerAdapt
 
     @Override
     public RecyclerAdapterDownloads.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.bucket_cell, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.bucket_row, parent, false);
         return new RecyclerAdapterDownloads.ViewHolder(v);
     }
 
@@ -64,6 +67,7 @@ public class RecyclerAdapterDownloads extends RecyclerView.Adapter<RecyclerAdapt
     public void onBindViewHolder(final RecyclerAdapterDownloads.ViewHolder holder, int position) {
         Folder folder = folderList.get(position);
         holder.folderLabel.setText(folder.getFolderName());
+        holder.folderCount.setText(String.format(countPlaceHolder, folder.getVideos().size()));
         holder.itemView.setTag(folder);
     }
 
