@@ -23,4 +23,6 @@
     <string name="problem">Problem</string>
     <string name="send">Send</string>
     <string name="thank_you">Thank you!</string>
+    <string name="permission_title">Permission request</string>
+    <string name="permission_message">We need storage permission in order to save videos to your device and disaply your saved videos.</string>
 </resources>

@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="100dp"
-              android:layout_height="350dp"
+              android:layout_height="wrap_content"
               android:orientation="vertical">
 
     <ImageView
@@ -13,31 +13,31 @@
 
     <TextView
         android:id="@+id/video_label"
+        fontPath="fonts/myriadprocond.otf"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        fontPath="fonts/myriadprocond.otf"
-        tools:ignore="MissingPrefix"
-        android:textColor="@color/top_color"
-        android:textStyle="bold"
+        android:layout_gravity="center_vertical"
         android:gravity="center"
         android:maxLines="1"
-        android:layout_gravity="center_vertical"/>
+        android:textColor="@color/top_color"
+        android:textStyle="bold"
+        tools:ignore="MissingPrefix"/>
 
     <TextView
         android:id="@+id/video_duration"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/black"
+        android:layout_gravity="center_vertical"
         android:gravity="center"
-        android:layout_gravity="center_vertical"/>
+        android:textColor="@android:color/black"/>
 
     <TextView
         android:id="@+id/video_size"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/black"
+        android:layout_gravity="center_vertical"
         android:gravity="center"
-        android:layout_gravity="center_vertical"/>
+        android:textColor="@android:color/black"/>
 
     <ImageView
         android:id="@+id/icone_delete"

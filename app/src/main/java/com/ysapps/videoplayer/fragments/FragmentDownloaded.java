@@ -3,7 +3,6 @@ package com.ysapps.videoplayer.fragments;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -24,7 +23,6 @@ import com.ysapps.videoplayer.adapters.RecyclerAdapterVideoList;
 import java.util.ArrayList;
 
 import static com.ysapps.videoplayer.activities.MainActivity.CODE_STORAGE_PERMISSION;
-import static com.ysapps.videoplayer.activities.MainActivity.KEY_ASK_EXTERNAL_PERMISSION;
 
 
 /**
@@ -64,7 +62,7 @@ public class FragmentDownloaded extends Fragment {
                     folders = Utils.getRootFolders(getContext());
                     recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
                     recyclerView.setAdapter(new RecyclerAdapterDownloads(folders, FragmentDownloaded.this));
-                } else if (PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean(KEY_ASK_EXTERNAL_PERMISSION, true)) {
+                } else {
                     ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, CODE_STORAGE_PERMISSION);
                 }
             } else if(which == SHOW_FOLDER_CONTENT){

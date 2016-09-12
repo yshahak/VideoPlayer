@@ -38,6 +38,9 @@
 
         <activity android:name=".activities.FeedbackActivity"/>
 
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="648616db1fb4b35e79e045a0c05c83a38935e340" />
     </application>
 
 </manifest>
