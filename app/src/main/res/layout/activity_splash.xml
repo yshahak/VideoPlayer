@@ -31,7 +31,7 @@
         android:layout_height="0dp"
         android:layout_weight="3"/>
 
-    <TextView
+    <!--<TextView
         android:id="@+id/splash_footer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -41,6 +41,6 @@
         android:text="@string/splash_footer"
         android:textStyle="bold"
         android:textSize="12sp"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_gravity="center_horizontal"/>-->
 
 </LinearLayout>

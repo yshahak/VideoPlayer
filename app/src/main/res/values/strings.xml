@@ -15,7 +15,7 @@
     <string name="delete_video">DELETE VIDEO</string>
     <string name="are_you_sure">Are you sure you want to delete the file?</string>
     <string name="delete_completed">FILE SUCCESSFULLY DELETED!</string>
-    <string name="help">Search for videos, press on video for playing it, or hit the download button for download it.</string>
+    <string name="help">Search for videos, press on a video to play it or click the download button to download it.</string>
     <string name="title_feedback">Feedback</string>
     <string name="feedback_description"><b>Tell us what you think</b>\n\nyour opinion matters to us.\nPlease share your feedback\nso we can make your experience better</string>
     <string name="feedback_description_email"><b>Enter email address</b></string>
@@ -24,6 +24,6 @@
     <string name="send">Send</string>
     <string name="thank_you">Thank you!</string>
     <string name="permission_title">Permission request</string>
-    <string name="permission_message">We need storage permission in order to save videos to your device and disaply your saved videos.</string>
+    <string name="permission_message">We need storage permission in order to save videos to your device and display your saved videos.</string>
     <string name="count_place_holder">%1$d Videos</string>
 </resources>

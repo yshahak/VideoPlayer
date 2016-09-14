@@ -84,7 +84,7 @@ public class RecyclerAdapterVideoList extends RecyclerView.Adapter<RecyclerAdapt
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         final Video video = videos.get(position);
         Picasso
                 .with(holder.itemView.getContext())
@@ -100,17 +100,36 @@ public class RecyclerAdapterVideoList extends RecyclerView.Adapter<RecyclerAdapt
                     @Override
                     public void onError() {
                         videos.remove(video);
-                        notifyDataSetChanged();
+                        holder.itemView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                notifyDataSetChanged();
+                            }
+                        });
                     }
                 });
-        boolean contain = video.getVideoName().contains(".mp4") || video.getVideoName().contains(".MP4");
+        String videoName = video.getVideoName();
+        if (videoName == null) {
+            videos.remove(video);
+            holder.itemView.post(new Runnable() {
+                @Override
+                public void run() {
+                    notifyDataSetChanged();
+                }
+            });
+            return;
+
+        }
+        boolean contain = videoName.contains(".mp4") || videoName.contains(".MP4");
         String splitter = null;
         if (contain) {
-            splitter = video.getVideoName().contains(".mp4") ? ".mp4" : "MP4";
+            splitter = videoName.contains(".mp4") ? ".mp4" : "MP4";
         }
-        String title = (contain ? video.getVideoName().split(splitter)[0] : video.getVideoName());
+        String title = (contain ? videoName.split(splitter)[0] : videoName);
         holder.videoLabel.setText(title);
-        holder.videoSize.setText(video.getVideoSize());
+        if (video.getVideoSize() != null) {
+            holder.videoSize.setText(video.getVideoSize());
+        }
         holder.videoDuration.setText(String.format(Locale.getDefault(), "%02d:%02d", ((video.getVideoLength() / 1000) % 3600) / 60, video.getVideoLength() / 1000 % 60));
         holder.itemView.setTag(video);
 
