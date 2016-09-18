@@ -26,6 +26,9 @@ import android.util.Log;
 
 import com.startapp.android.publish.StartAppAd;
 import com.startapp.android.publish.StartAppSDK;
+import com.startapp.android.publish.model.AdPreferences;
+import com.startapp.android.publish.splash.SplashConfig;
+import com.startapp.android.publish.splash.SplashHideListener;
 import com.ysapps.videoplayer.R;
 import com.ysapps.videoplayer.adapters.CustomPagerAdapter;
 import com.ysapps.videoplayer.fragments.FragmentDownloaded;
@@ -53,37 +56,51 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         StartAppSDK.init(this, STARTAPP_ID, true);
-        boolean permission = ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-        if (permission) {
-            StartAppAd.showSplash(this, savedInstanceState);
-            viewPager.setAdapter(new CustomPagerAdapter(getSupportFragmentManager()));
-            viewPager.setCurrentItem(1);
-        } else {
-            new AlertDialog.Builder(MainActivity.this)
-                    .setTitle(getString(R.string.permission_title))
-                    .setMessage(getString(R.string.permission_message))
-                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialogInterface) {
+        if (savedInstanceState == null) {
+            StartAppAd.showSplash(this, savedInstanceState, new SplashConfig(), new AdPreferences(),null, new SplashHideListener() {
+                @Override
+                public void splashHidden() {
+//                Log.d("TAG", "splashHidden");
+                    boolean permission = ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+                    if (permission) {
+                        if (viewPager != null) {
                             viewPager.setAdapter(new CustomPagerAdapter(getSupportFragmentManager()));
                             viewPager.setCurrentItem(1);
                         }
-                    })
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, CODE_STORAGE_PERMISSION);
-                        }
-                    })
-                    .show();
+                    } else {
+                        new AlertDialog.Builder(MainActivity.this)
+                                .setTitle(getString(R.string.permission_title))
+                                .setMessage(getString(R.string.permission_message))
+                                .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                                    @Override
+                                    public void onCancel(DialogInterface dialogInterface) {
+                                        viewPager.setAdapter(new CustomPagerAdapter(getSupportFragmentManager()));
+                                        viewPager.setCurrentItem(1);
+                                    }
+                                })
+                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, CODE_STORAGE_PERMISSION);
+                                    }
+                                })
+                                .show();
+                    }
+
+                }
+            });
         }
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar)findViewById(R.id.tool_bar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
         //noinspection ConstantConditions
         getSupportActionBar().setTitle(null);
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
+        if (savedInstanceState != null) {
+            viewPager.setAdapter(new CustomPagerAdapter(getSupportFragmentManager()));
+            viewPager.setCurrentItem(1);
+        }
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
         registerReceiver(receiver, new IntentFilter(
@@ -97,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (FragmentDownloaded.state == SHOW_FOLDER_CONTENT){
+        if (FragmentDownloaded.state == SHOW_FOLDER_CONTENT) {
             FragmentDownloaded.state = SHOW_FOLDERS_GRID;
             viewPager.getAdapter().notifyDataSetChanged(); //it will refresh second fragment
         } else {
@@ -116,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == CODE_REQUEST_DELETE  ){
+        if (requestCode == CODE_REQUEST_DELETE) {
             if (resultCode == RESULT_OK) {
                 viewPager.getAdapter().notifyDataSetChanged(); //it will refresh second fragment
             } else {
@@ -128,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == CODE_STORAGE_PERMISSION){
+        if (requestCode == CODE_STORAGE_PERMISSION) {
             PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(KEY_ASK_EXTERNAL_PERMISSION, false).apply();
             if (viewPager.getAdapter() != null) {
                 viewPager.getAdapter().notifyDataSetChanged(); //it will refresh second fragment
@@ -145,9 +162,9 @@ public class MainActivity extends AppCompatActivity {
             String action = intent.getAction();
             if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
                 Long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
-                if (downloadId == downId){
+                if (downloadId == downId) {
                     Log.d("TAG", "reciever got the doownload complete");
-                    File file = new File( Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), pathId);
+                    File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), pathId);
                     MediaScannerConnection.scanFile(getApplicationContext(), new String[]{
                                     file.getAbsolutePath()},
                             null, new MediaScannerConnection.OnScanCompletedListener() {
