@@ -58,13 +58,13 @@ public class Utils {
         ArrayList<Folder> folders = new ArrayList<>();
         Cursor vidCsr = context.getContentResolver().query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, VIDEO_PROJECTION,
                 null, null, null);//MediaStore.Video.VideoColumns.DATE_ADDED
-        getMediaIdnName(folders, vidCsr);
+        getMediaIdnName(folders, vidCsr, context.getString(R.string.app_name));
         Log.d("TAG", "video folders loading finished");
         return folders;
 
     }
 
-    private static ArrayList<Folder> getMediaIdnName(ArrayList<Folder> folders, Cursor videoCsr) {
+    private static ArrayList<Folder> getMediaIdnName(ArrayList<Folder> folders, Cursor videoCsr, String appName) {
         // getting Bucket ID and Display Name Column number for both Images and Videos
 
         int colId = 0;
@@ -97,10 +97,15 @@ public class Utils {
             } while (videoCsr.moveToNext());
         }
         videoCsr.close();
+
         for (int i = 0; i < folderMap.size(); i++) {
-            folders.add(folderMap.valueAt(i));
+            Folder folder = folderMap.valueAt(i);
+            if (folder.getFolderName().equals(appName)){
+                folders.add(0, folder);
+            } else {
+                folders.add(folder);
+            }
         }
-//        getMediaInFolder(context, folderMap, counterMap);
         return folders;
     }
 
@@ -158,7 +163,7 @@ public class Utils {
         request.setDescription("Downloading from server");
         request.allowScanningByMediaScanner();
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+        request.setDestinationInExternalPublicDir(context.getString(R.string.app_name), fileName);
         request.allowScanningByMediaScanner();
         DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
         return manager.enqueue(request);

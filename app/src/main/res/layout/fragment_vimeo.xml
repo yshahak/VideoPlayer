@@ -27,7 +27,7 @@
             android:layout_height="1dp"
             android:layout_weight="1"/>
 
-        <com.ysapps.videoplayer.views.CustomSearchView
+        <android.support.v7.widget.SearchView
             android:id="@+id/searchview"
             android:layout_width="200dp"
             android:layout_height="30dp"

@@ -118,8 +118,18 @@ public class MainActivity extends AppCompatActivity {
                                     file.getAbsolutePath()},
                             null, new MediaScannerConnection.OnScanCompletedListener() {
                                 public void onScanCompleted(String path, Uri uri) {
-                                    Log.d("TAG", "onScanCompleted: " + uri.toString());
-                                    viewPager.getAdapter().notifyDataSetChanged(); //it will refresh second fragment
+                                    if (uri != null) {
+                                        Log.d("TAG", "onScanCompleted: " + uri.toString());
+                                    }
+                                    if (viewPager != null && viewPager.getAdapter() != null) {
+                                        viewPager.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                viewPager.getAdapter().notifyDataSetChanged(); //it will refresh second fragment
+                                            }
+                                        });
+                                    }
+
                                 }
 
                             });
