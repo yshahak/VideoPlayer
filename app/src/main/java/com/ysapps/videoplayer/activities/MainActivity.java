@@ -1,11 +1,14 @@
 package com.ysapps.videoplayer.activities;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,11 +16,16 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
+import com.startapp.android.publish.StartAppAd;
+import com.startapp.android.publish.StartAppSDK;
 import com.ysapps.videoplayer.R;
 import com.ysapps.videoplayer.adapters.CustomPagerAdapter;
 import com.ysapps.videoplayer.fragments.FragmentDownloaded;
@@ -34,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String KEY_ASK_EXTERNAL_PERMISSION = "keyExPermission";
     public final static int CODE_STORAGE_PERMISSION = 100;
     public static final int CODE_REQUEST_DELETE = 200;
+    private static final String STARTAPP_ID = "208888194";
 
     public static long downId;
     public static String pathId;
@@ -43,21 +52,40 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        StartAppSDK.init(this, STARTAPP_ID, true);
+        boolean permission = ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        if (permission) {
+            StartAppAd.showSplash(this, savedInstanceState);
+            viewPager.setAdapter(new CustomPagerAdapter(getSupportFragmentManager()));
+            viewPager.setCurrentItem(1);
+        } else {
+            new AlertDialog.Builder(MainActivity.this)
+                    .setTitle(getString(R.string.permission_title))
+                    .setMessage(getString(R.string.permission_message))
+                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialogInterface) {
+                            viewPager.setAdapter(new CustomPagerAdapter(getSupportFragmentManager()));
+                            viewPager.setCurrentItem(1);
+                        }
+                    })
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, CODE_STORAGE_PERMISSION);
+                        }
+                    })
+                    .show();
+        }
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar)findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
         //noinspection ConstantConditions
         getSupportActionBar().setTitle(null);
-//        Typeface myTypeface = Typeface.createFromAsset(getAssets(), "fonts/myriadprocond.otf");
-//        TextView myTextView = (TextView)findViewById(R.id.tool_bar_title);
-//        myTextView.setTypeface(myTypeface);
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
-        viewPager.setAdapter(new CustomPagerAdapter(getSupportFragmentManager()));
-        viewPager.setCurrentItem(1);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
-        Log.d("path external", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath());
         registerReceiver(receiver, new IntentFilter(
                 DownloadManager.ACTION_DOWNLOAD_COMPLETE));
     }
@@ -73,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
             FragmentDownloaded.state = SHOW_FOLDERS_GRID;
             viewPager.getAdapter().notifyDataSetChanged(); //it will refresh second fragment
         } else {
+            StartAppAd.onBackPressed(this);
             super.onBackPressed();
         }
     }
@@ -101,7 +130,12 @@ public class MainActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == CODE_STORAGE_PERMISSION){
             PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(KEY_ASK_EXTERNAL_PERMISSION, false).apply();
-            viewPager.getAdapter().notifyDataSetChanged(); //it will refresh second fragment
+            if (viewPager.getAdapter() != null) {
+                viewPager.getAdapter().notifyDataSetChanged(); //it will refresh second fragment
+            } else {
+                viewPager.setAdapter(new CustomPagerAdapter(getSupportFragmentManager()));
+                viewPager.setCurrentItem(1);
+            }
         }
     }
 
@@ -121,11 +155,16 @@ public class MainActivity extends AppCompatActivity {
                                     if (uri != null) {
                                         Log.d("TAG", "onScanCompleted: " + uri.toString());
                                     }
-                                    if (viewPager != null && viewPager.getAdapter() != null) {
+                                    if (viewPager != null) {
                                         viewPager.post(new Runnable() {
                                             @Override
                                             public void run() {
-                                                viewPager.getAdapter().notifyDataSetChanged(); //it will refresh second fragment
+                                                if (viewPager.getAdapter() != null) {
+                                                    viewPager.getAdapter().notifyDataSetChanged(); //it will refresh second fragment
+                                                } else {
+                                                    viewPager.setAdapter(new CustomPagerAdapter(getSupportFragmentManager()));
+                                                    viewPager.setCurrentItem(1);
+                                                }
                                             }
                                         });
                                     }

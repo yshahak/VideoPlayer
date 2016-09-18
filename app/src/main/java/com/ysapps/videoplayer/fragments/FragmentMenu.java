@@ -1,6 +1,7 @@
 package com.ysapps.videoplayer.fragments;
 
 import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -14,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.startapp.android.publish.StartAppAd;
 import com.ysapps.videoplayer.R;
 import com.ysapps.videoplayer.activities.FeedbackActivity;
 import com.ysapps.videoplayer.activities.MainActivity;
@@ -86,7 +88,12 @@ public class FragmentMenu extends Fragment implements View.OnClickListener {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Help");
         builder.setMessage(getString(R.string.help));
-        builder.setPositiveButton("OK",null);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                StartAppAd.showAd(getActivity());
+            }
+        });
         builder.show();
     }
 

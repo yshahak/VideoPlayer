@@ -1,43 +1,30 @@
 package com.ysapps.videoplayer.adapters;
 
-import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.net.Uri;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.vimeo.networking.model.Video;
 import com.vimeo.networking.model.VideoList;
 import com.ysapps.videoplayer.R;
-import com.ysapps.videoplayer.Utils;
 import com.ysapps.videoplayer.activities.DownloadDialogActivity;
-import com.ysapps.videoplayer.activities.MainActivity;
 import com.ysapps.videoplayer.activities.VimeoPlayerActivity;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Map;
 
 import uk.breedrapps.vimeoextractor.OnVimeoExtractionListener;
 import uk.breedrapps.vimeoextractor.VimeoExtractor;
 import uk.breedrapps.vimeoextractor.VimeoVideo;
 
-import static com.ysapps.videoplayer.activities.MainActivity.CODE_STORAGE_PERMISSION;
 import static com.ysapps.videoplayer.activities.VimeoPlayerActivity.EXTRA_LINK;
 
 /**
@@ -48,35 +35,29 @@ public class RecyclerAdapterVimeo extends RecyclerView.Adapter<RecyclerAdapterVi
 
     private final TypedArray ids;
     private VideoList videoList;
-    private WeakReference<Activity> activityWeakReference;
     private String contentPlaceHolder;
 
     public RecyclerAdapterVimeo(Activity activity, VideoList videoList) {
         this.videoList = videoList;
-        activityWeakReference = new WeakReference<>(activity);
         ids = activity.getResources().obtainTypedArray(R.array.menu_ids);
         contentPlaceHolder = activity.getString(R.string.vimeo_video_placeholder);
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
-             PopupMenu.OnMenuItemClickListener {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ImageView thumbnail;
-        ImageView spinner;
+        ImageView downBtn;
         TextView textViewContent, textViewLabel, videoLength;
-        PopupMenu popupMenu;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             thumbnail = (ImageView) itemView.findViewById(R.id.thumbnail);
-            spinner = (ImageView) itemView.findViewById(R.id.spinner_down);
+            downBtn = (ImageView) itemView.findViewById(R.id.spinner_down);
             textViewContent = (TextView) itemView.findViewById(R.id.text_content);
             textViewLabel = (TextView)itemView.findViewById(R.id.text_label);
             videoLength = (TextView)itemView.findViewById(R.id.video_duration);
             itemView.setOnClickListener(this);
-            popupMenu = new PopupMenu(itemView.getContext(), spinner);
-            popupMenu.setOnMenuItemClickListener(this);
-            spinner.setOnClickListener(this);
+            downBtn.setOnClickListener(this);
 
         }
 
@@ -89,8 +70,8 @@ public class RecyclerAdapterVimeo extends RecyclerView.Adapter<RecyclerAdapterVi
                     intent.putExtra(EXTRA_LINK, html);
                     itemView.getContext().startActivity(intent);
                 }
-            } else if (view.equals(spinner)){
-                VimeoVideo video = (VimeoVideo) spinner.getTag();
+            } else if (view.equals(downBtn)){
+                VimeoVideo video = (VimeoVideo) downBtn.getTag();
                 String[] arrayKeys = video.getStreams().keySet().toArray(new String[video.getStreams().keySet().size()]);
                 String[] arrayValues = video.getStreams().values().toArray(new String[video.getStreams().keySet().size()]);
 
@@ -101,31 +82,8 @@ public class RecyclerAdapterVimeo extends RecyclerView.Adapter<RecyclerAdapterVi
                 intent.putExtra(DownloadDialogActivity.EXTRA_VIDEO_TITLE, video.getTitle().replaceAll("[.]", ""));
                 view.getContext().startActivity(intent);
             }
-
-
         }
 
-
-        @Override
-        public boolean onMenuItemClick(MenuItem item) {
-            Log.d("TAG", "item pos: " + item.getOrder());
-            VimeoVideo video = (VimeoVideo) spinner.getTag();
-            if (video != null) {
-                boolean permission = ContextCompat.checkSelfPermission(itemView.getContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-                if (permission) {
-                    Map<String, String> strems = video.getStreams();
-                    MainActivity.pathId = video.getTitle().replaceAll("[.]", "") + ".mp4";
-                    MainActivity.downId =  Utils.downloadFile(itemView.getContext(), video.getStreams().get(new ArrayList(strems.keySet()).get(item.getOrder())), MainActivity.pathId);
-                } else {
-                    Activity activity = activityWeakReference.get();
-                    if (activity != null) {
-                        Toast.makeText(activity, "You need to allow writing to memory", Toast.LENGTH_SHORT).show();
-                        ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, CODE_STORAGE_PERMISSION);
-                    }
-                }
-            }
-            return true;
-        }
     }
 
     @Override
@@ -155,7 +113,7 @@ public class RecyclerAdapterVimeo extends RecyclerView.Adapter<RecyclerAdapterVi
         VimeoExtractor.getInstance().fetchVideoWithIdentifier(id, null, new OnVimeoExtractionListener() {
             @Override
             public void onSuccess(VimeoVideo video) {
-                holder.spinner.setTag(video);
+                holder.downBtn.setTag(video);
             }
 
             @Override
