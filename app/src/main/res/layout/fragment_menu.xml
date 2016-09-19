@@ -74,7 +74,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="8dp"
-            android:src="@drawable/temp_logo_menu"/>
+            android:src="@mipmap/ic_launcher"/>
     </LinearLayout>
 
     </ScrollView>
