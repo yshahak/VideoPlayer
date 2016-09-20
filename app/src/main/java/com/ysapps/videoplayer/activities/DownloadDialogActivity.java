@@ -17,6 +17,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.facebook.ads.InterstitialAd;
 import com.startapp.android.publish.StartAppAd;
 import com.ysapps.videoplayer.R;
 import com.ysapps.videoplayer.Utils;
@@ -37,7 +38,9 @@ public class DownloadDialogActivity extends AppCompatActivity implements View.On
     public static final String EXTRA_VIDEOS_STREAMS_LINKS = "extraLinks";
     public static final String EXTRA_VIDEO_TITLE = "extreVideoTitle";
     private static final String KEY_STARTAPP_COUNT = "keyStartAppCOunt";
+    private static final String FACEBOOK_PLACEMENT_DOWNLOADED = "1671180859802010_1671181003135329";
 
+    private InterstitialAd  downloadPressedInterstital;
     private EditText editText;
 
     private TypedArray ids;
@@ -49,6 +52,8 @@ public class DownloadDialogActivity extends AppCompatActivity implements View.On
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        downloadPressedInterstital = new InterstitialAd(this, FACEBOOK_PLACEMENT_DOWNLOADED);
+        downloadPressedInterstital.loadAd();
         setContentView(R.layout.dialog_download);
         editText = (EditText)findViewById(R.id.edit_text_file_name);
         ids = getResources().obtainTypedArray(R.array.menu_ids);
@@ -92,7 +97,11 @@ public class DownloadDialogActivity extends AppCompatActivity implements View.On
                 SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 int count = pref.getInt(KEY_STARTAPP_COUNT, 0);
                 if (count % 3 == 0) {
-                    StartAppAd.showAd(this);
+                    if (downloadPressedInterstital.isAdLoaded()){
+                        downloadPressedInterstital.show();
+                    } else {
+                        StartAppAd.showAd(this);
+                    }
                 }
                 pref.edit().putInt(KEY_STARTAPP_COUNT, ++count).apply();
                 finish();
@@ -117,4 +126,12 @@ public class DownloadDialogActivity extends AppCompatActivity implements View.On
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (downloadPressedInterstital != null) {
+            downloadPressedInterstital.destroy();
+        }
+
+    }
 }

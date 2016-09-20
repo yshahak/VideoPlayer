@@ -48,4 +48,6 @@ dependencies {
         transitive = true;
     }
     compile files('libs/StartAppInApp-3.4.3.jar')
+    compile 'com.facebook.android:audience-network-sdk:4.+'
+
 }

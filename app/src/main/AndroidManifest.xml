@@ -57,6 +57,10 @@
                   android:theme="@android:style/Theme"
                   android:configChanges="orientation|keyboardHidden|screenSize" />
 
+        <!--Facebook-->
+        <activity android:name="com.facebook.ads.InterstitialAdActivity"
+                  android:configChanges="keyboardHidden|orientation|screenSize" />
+
     </application>
 
 </manifest>

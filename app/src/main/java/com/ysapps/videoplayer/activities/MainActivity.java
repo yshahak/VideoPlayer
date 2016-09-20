@@ -24,6 +24,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
+import com.facebook.ads.Ad;
+import com.facebook.ads.AdError;
+import com.facebook.ads.AdSettings;
+import com.facebook.ads.InterstitialAd;
+import com.facebook.ads.InterstitialAdListener;
 import com.startapp.android.publish.StartAppAd;
 import com.startapp.android.publish.StartAppSDK;
 import com.startapp.android.publish.model.AdPreferences;
@@ -40,24 +45,32 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 import static com.ysapps.videoplayer.fragments.FragmentDownloaded.SHOW_FOLDERS_GRID;
 import static com.ysapps.videoplayer.fragments.FragmentDownloaded.SHOW_FOLDER_CONTENT;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements InterstitialAdListener {
 
     public static final String KEY_ASK_EXTERNAL_PERMISSION = "keyExPermission";
     public final static int CODE_STORAGE_PERMISSION = 100;
     public static final int CODE_REQUEST_DELETE = 200;
     private static final String STARTAPP_ID = "208888194";
+    private static final String FACEBOOK_PLACEMENT_EXIT = "1671180859802010_1671181033135326";
+
 
     public static long downId;
     public static String pathId;
     public ViewPager viewPager;
+    private boolean fbBackPressed;
+    private InterstitialAd exitPressedInterstital;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         StartAppSDK.init(this, STARTAPP_ID, true);
+        exitPressedInterstital = new InterstitialAd(this, FACEBOOK_PLACEMENT_EXIT);
+        exitPressedInterstital.setAdListener(this);
+        exitPressedInterstital.loadAd();
+
         if (savedInstanceState == null) {
-            StartAppAd.showSplash(this, savedInstanceState, new SplashConfig(), new AdPreferences(),null, new SplashHideListener() {
+            StartAppAd.showSplash(this, null, new SplashConfig(), new AdPreferences(),null, new SplashHideListener() {
                 @Override
                 public void splashHidden() {
 //                Log.d("TAG", "splashHidden");
@@ -105,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(viewPager);
         registerReceiver(receiver, new IntentFilter(
                 DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+        AdSettings.addTestDevice("2aeaecd1df1ed43233acc96709839283");
     }
 
     @Override
@@ -118,14 +132,22 @@ public class MainActivity extends AppCompatActivity {
             FragmentDownloaded.state = SHOW_FOLDERS_GRID;
             viewPager.getAdapter().notifyDataSetChanged(); //it will refresh second fragment
         } else {
-            StartAppAd.onBackPressed(this);
-            super.onBackPressed();
+            if (exitPressedInterstital.isAdLoaded()){
+                exitPressedInterstital.show();
+                fbBackPressed = true;
+            } else {
+                StartAppAd.onBackPressed(this);
+            }
         }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (exitPressedInterstital != null) {
+            exitPressedInterstital.destroy();
+        }
+
         unregisterReceiver(receiver);
     }
 
@@ -194,4 +216,32 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+
+
+    @Override
+    public void onInterstitialDisplayed(Ad ad) {
+
+    }
+
+    @Override
+    public void onInterstitialDismissed(Ad ad) {
+        if (fbBackPressed){
+            fbBackPressed = false;
+        }
+    }
+
+    @Override
+    public void onError(Ad ad, AdError adError) {
+
+    }
+
+    @Override
+    public void onAdLoaded(Ad ad) {
+
+    }
+
+    @Override
+    public void onAdClicked(Ad ad) {
+
+    }
 }
