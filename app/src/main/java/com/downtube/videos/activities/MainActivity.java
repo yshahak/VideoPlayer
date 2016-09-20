@@ -1,7 +1,6 @@
 package com.downtube.videos.activities;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -34,9 +33,6 @@ import com.facebook.ads.InterstitialAd;
 import com.facebook.ads.InterstitialAdListener;
 import com.startapp.android.publish.StartAppAd;
 import com.startapp.android.publish.StartAppSDK;
-import com.startapp.android.publish.model.AdPreferences;
-import com.startapp.android.publish.splash.SplashConfig;
-import com.startapp.android.publish.splash.SplashHideListener;
 
 import java.io.File;
 
@@ -60,49 +56,13 @@ public class MainActivity extends AppCompatActivity implements InterstitialAdLis
     private boolean fbBackPressed;
     private InterstitialAd exitPressedInterstital;
 
-    @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         StartAppSDK.init(this, STARTAPP_ID, true);
-        exitPressedInterstital = new InterstitialAd(this, FACEBOOK_PLACEMENT_EXIT);
-        exitPressedInterstital.setAdListener(this);
-        exitPressedInterstital.loadAd();
-
-        if (savedInstanceState == null) {
-            StartAppAd.showSplash(this, null, new SplashConfig(), new AdPreferences(),null, new SplashHideListener() {
-                @Override
-                public void splashHidden() {
-//                Log.d("TAG", "splashHidden");
-                    boolean permission = ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
-                    if (permission) {
-                        if (viewPager != null) {
-                            viewPager.setAdapter(new CustomPagerAdapter(getSupportFragmentManager()));
-                            viewPager.setCurrentItem(1);
-                        }
-                    } else {
-                        new AlertDialog.Builder(MainActivity.this)
-                                .setTitle(getString(R.string.permission_title))
-                                .setMessage(getString(R.string.permission_message))
-                                .setOnCancelListener(new DialogInterface.OnCancelListener() {
-                                    @Override
-                                    public void onCancel(DialogInterface dialogInterface) {
-                                        viewPager.setAdapter(new CustomPagerAdapter(getSupportFragmentManager()));
-                                        viewPager.setCurrentItem(1);
-                                    }
-                                })
-                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                        ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, CODE_STORAGE_PERMISSION);
-                                    }
-                                })
-                                .show();
-                    }
-
-                }
-            });
-        }
+        exitPressedInterstital = new InterstitialAd(MainActivity.this, FACEBOOK_PLACEMENT_EXIT);
+        exitPressedInterstital.setAdListener(MainActivity.this);
+        StartAppAd.showSplash(this, savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
@@ -110,20 +70,50 @@ public class MainActivity extends AppCompatActivity implements InterstitialAdLis
         getSupportActionBar().setTitle(null);
 
         viewPager = (ViewPager) findViewById(R.id.viewpager);
-        if (savedInstanceState != null) {
-            viewPager.setAdapter(new CustomPagerAdapter(getSupportFragmentManager()));
-            viewPager.setCurrentItem(1);
-        }
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
         registerReceiver(receiver, new IntentFilter(
                 DownloadManager.ACTION_DOWNLOAD_COMPLETE));
-        AdSettings.addTestDevice("2aeaecd1df1ed43233acc96709839283");
+
+        AdSettings.addTestDevice("8278fc45c192e519256cfe244e4e1f65");
     }
 
     @Override
     protected void attachBaseContext(Context newBase) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!exitPressedInterstital.isAdLoaded()) {
+            exitPressedInterstital.loadAd();
+        }
+        boolean permission = ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+        if (permission) {
+            if (viewPager.getAdapter() == null) {
+                viewPager.setAdapter(new CustomPagerAdapter(getSupportFragmentManager()));
+                viewPager.setCurrentItem(1);
+            }
+        } else {
+            new AlertDialog.Builder(MainActivity.this)
+                    .setTitle(getString(R.string.permission_title))
+                    .setMessage(getString(R.string.permission_message))
+                    .setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialogInterface) {
+                            viewPager.setAdapter(new CustomPagerAdapter(getSupportFragmentManager()));
+                            viewPager.setCurrentItem(1);
+                        }
+                    })
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, CODE_STORAGE_PERMISSION);
+                        }
+                    })
+                    .show();
+        }
     }
 
     @Override
@@ -133,10 +123,13 @@ public class MainActivity extends AppCompatActivity implements InterstitialAdLis
             viewPager.getAdapter().notifyDataSetChanged(); //it will refresh second fragment
         } else {
             if (exitPressedInterstital.isAdLoaded()){
+                Log.d("TAG", "facebook shown BACK");
                 exitPressedInterstital.show();
                 fbBackPressed = true;
             } else {
+                Log.d("TAG", "startApp shown BACK");
                 StartAppAd.onBackPressed(this);
+                super.onBackPressed();
             }
         }
     }
@@ -226,13 +219,17 @@ public class MainActivity extends AppCompatActivity implements InterstitialAdLis
     @Override
     public void onInterstitialDismissed(Ad ad) {
         if (fbBackPressed){
+            Log.d("TAG", "facebook onInterstitialDismissed");
             fbBackPressed = false;
+            if (!isFinishing()){
+                finish();
+            }
         }
     }
 
     @Override
     public void onError(Ad ad, AdError adError) {
-
+        Log.d("TAG", "facebook onError");
     }
 
     @Override
@@ -242,6 +239,9 @@ public class MainActivity extends AppCompatActivity implements InterstitialAdLis
 
     @Override
     public void onAdClicked(Ad ad) {
-
+        if (fbBackPressed){
+            fbBackPressed = false;
+            super.onBackPressed();
+        }
     }
 }

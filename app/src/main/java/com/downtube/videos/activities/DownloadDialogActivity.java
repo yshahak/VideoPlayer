@@ -17,10 +17,10 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.facebook.ads.InterstitialAd;
-import com.startapp.android.publish.StartAppAd;
 import com.downtube.videos.R;
 import com.downtube.videos.Utils;
+import com.facebook.ads.InterstitialAd;
+import com.startapp.android.publish.StartAppAd;
 
 import java.util.ArrayList;
 import java.util.Arrays;
