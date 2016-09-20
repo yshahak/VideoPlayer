@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="@layout/fragment_menu">
+
+    <TextView
+        android:id="@+id/menu_content_help"
+        style="@style/menu_content"
+        fontPath="fonts/MyriadPro-Regular.otf"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#000033"
+        tools:ignore="MissingPrefix"
+        tools:text="@string/menu_header_about" />
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="3dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:background="@android:color/darker_gray" />
+</merge>
