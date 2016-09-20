@@ -24,6 +24,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
+import com.downtube.videos.R;
+import com.downtube.videos.adapters.CustomPagerAdapter;
+import com.downtube.videos.fragments.FragmentDownloaded;
 import com.facebook.ads.Ad;
 import com.facebook.ads.AdError;
 import com.facebook.ads.AdSettings;
@@ -34,9 +37,6 @@ import com.startapp.android.publish.StartAppSDK;
 import com.startapp.android.publish.model.AdPreferences;
 import com.startapp.android.publish.splash.SplashConfig;
 import com.startapp.android.publish.splash.SplashHideListener;
-import com.downtube.videos.R;
-import com.downtube.videos.adapters.CustomPagerAdapter;
-import com.downtube.videos.fragments.FragmentDownloaded;
 
 import java.io.File;
 
