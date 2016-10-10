@@ -23,11 +23,6 @@ public class MyApplication extends Application {
                 .withCaptureUncaughtExceptions(false)
                 .withPulseEnabled(true)
                 .build(this, "3NBGWRBH46XN83F2B4GZ");
-//        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
-//                .setDefaultFontPath("fonts/myriadprocond.otf")
-//                .setFontAttrId(R.attr.fontPath)
-//                .build()
-//        );
     }
 
 

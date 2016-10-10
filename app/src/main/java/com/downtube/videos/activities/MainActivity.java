@@ -22,6 +22,9 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.webkit.WebView;
+import android.widget.ImageButton;
 
 import com.downtube.videos.R;
 import com.downtube.videos.adapters.CustomPagerAdapter;
@@ -35,13 +38,15 @@ import com.startapp.android.publish.StartAppAd;
 import com.startapp.android.publish.StartAppSDK;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 import static com.downtube.videos.fragments.FragmentDownloaded.SHOW_FOLDERS_GRID;
 import static com.downtube.videos.fragments.FragmentDownloaded.SHOW_FOLDER_CONTENT;
+import static com.downtube.videos.fragments.FragmentVimeoWebView.downloadEnabled;
 
-public class MainActivity extends AppCompatActivity implements InterstitialAdListener {
+public class MainActivity extends AppCompatActivity implements InterstitialAdListener, ViewPager.OnPageChangeListener {
 
     public static final String KEY_ASK_EXTERNAL_PERMISSION = "keyExPermission";
     public final static int CODE_STORAGE_PERMISSION = 100;
@@ -56,22 +61,26 @@ public class MainActivity extends AppCompatActivity implements InterstitialAdLis
     private boolean fbBackPressed;
     private InterstitialAd exitPressedInterstital;
 
+    private ImageButton btnDownload;
+    private WeakReference<WebView> webViewWeakReference;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         StartAppSDK.init(this, STARTAPP_ID, true);
         exitPressedInterstital = new InterstitialAd(MainActivity.this, FACEBOOK_PLACEMENT_EXIT);
         exitPressedInterstital.setAdListener(MainActivity.this);
-        StartAppAd.showSplash(this, savedInstanceState);
+//        StartAppAd.showSplash(this, savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
         //noinspection ConstantConditions
         getSupportActionBar().setTitle(null);
-
+        btnDownload = (ImageButton) toolbar.findViewById(R.id.btn_download_video);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
+        viewPager.addOnPageChangeListener(this);
         registerReceiver(receiver, new IntentFilter(
                 DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 
@@ -121,7 +130,11 @@ public class MainActivity extends AppCompatActivity implements InterstitialAdLis
         if (FragmentDownloaded.state == SHOW_FOLDER_CONTENT) {
             FragmentDownloaded.state = SHOW_FOLDERS_GRID;
             viewPager.getAdapter().notifyDataSetChanged(); //it will refresh second fragment
-        } else {
+        } else if (viewPager.getCurrentItem() == 1 && webViewWeakReference != null && webViewWeakReference.get() != null && webViewWeakReference.get().canGoBack()){
+            webViewWeakReference.get().goBack();
+            downloadEnabled = false;
+        }
+        else {
             if (exitPressedInterstital.isAdLoaded()){
                 Log.d("TAG", "facebook shown BACK");
                 exitPressedInterstital.show();
@@ -243,5 +256,24 @@ public class MainActivity extends AppCompatActivity implements InterstitialAdLis
             fbBackPressed = false;
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+        btnDownload.setVisibility(position == 1 ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int state) {
+
+    }
+
+    public void storeWebViewRefernce(WebView fragmentVimeoWebView) {
+        webViewWeakReference = new WeakReference<>(fragmentVimeoWebView);
     }
 }

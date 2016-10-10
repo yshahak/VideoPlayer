@@ -15,10 +15,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name="com.downtube.videos.activities.SplashScreen">
-
-        </activity>
-
         <activity android:name="com.downtube.videos.activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

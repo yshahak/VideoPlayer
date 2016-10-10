@@ -6,7 +6,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import com.downtube.videos.fragments.FragmentDownloaded;
 import com.downtube.videos.fragments.FragmentMenu;
-import com.downtube.videos.fragments.VimeoFragment;
+import com.downtube.videos.fragments.FragmentVimeoWebView;
 
 /**
  * Created by B.E.L on 01/09/2016.
@@ -24,7 +24,8 @@ public class CustomPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 return FragmentMenu.newInstance(position);
             case 1:
-                return VimeoFragment.newInstance(position);
+                return new FragmentVimeoWebView();
+//                return VimeoFragment.newInstance(position);
             case 2:
                 return FragmentDownloaded.newInstance(position);
         }
