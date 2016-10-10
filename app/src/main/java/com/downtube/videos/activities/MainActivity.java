@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements InterstitialAdLis
         StartAppSDK.init(this, STARTAPP_ID, true);
         exitPressedInterstital = new InterstitialAd(MainActivity.this, FACEBOOK_PLACEMENT_EXIT);
         exitPressedInterstital.setAdListener(MainActivity.this);
-//        StartAppAd.showSplash(this, savedInstanceState);
+        StartAppAd.showSplash(this, savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);

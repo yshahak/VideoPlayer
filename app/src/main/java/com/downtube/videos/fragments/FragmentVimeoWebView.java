@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebBackForwardList;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageButton;
@@ -31,11 +32,17 @@ import uk.breedrapps.vimeoextractor.VimeoVideo;
 
 public class FragmentVimeoWebView extends Fragment implements View.OnClickListener {
 
+    private static final String DATA_SAVED = "dataSaved";
     private static boolean active;
     private ImageButton btnDownload;
     private WebView mWebView;
     public static boolean downloadEnabled;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
 
     @SuppressLint("SetJavaScriptEnabled")
     @Nullable
@@ -43,7 +50,11 @@ public class FragmentVimeoWebView extends Fragment implements View.OnClickListen
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mWebView = (WebView) inflater.inflate(R.layout.fragment_web_view, container, false);
         mWebView.getSettings().setJavaScriptEnabled(true);
-        mWebView.loadUrl("https://vimeo.com");
+        if (savedInstanceState != null && savedInstanceState.getString(DATA_SAVED) != null){
+            mWebView.loadUrl(savedInstanceState.getString(DATA_SAVED));
+        } else {
+            mWebView.loadUrl("https://vimeo.com");
+        }
         mWebView.setWebViewClient(new MyWebClient());
         btnDownload = (ImageButton) getActivity().findViewById(R.id.btn_download_video);
         btnDownload.setOnClickListener(this);
@@ -59,6 +70,14 @@ public class FragmentVimeoWebView extends Fragment implements View.OnClickListen
         mWebView.destroy();
         btnDownload.setVisibility(View.GONE);
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        WebBackForwardList mWebBackForwardList = mWebView.copyBackForwardList();
+        outState.putString(DATA_SAVED, mWebView.getUrl());
+    }
+
 
     @Override
     public void onClick(View view) {
