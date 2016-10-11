@@ -29,11 +29,6 @@ import android.widget.ImageButton;
 import com.downtube.videos.R;
 import com.downtube.videos.adapters.CustomPagerAdapter;
 import com.downtube.videos.fragments.FragmentDownloaded;
-import com.facebook.ads.Ad;
-import com.facebook.ads.AdError;
-import com.facebook.ads.AdSettings;
-import com.facebook.ads.InterstitialAd;
-import com.facebook.ads.InterstitialAdListener;
 import com.startapp.android.publish.StartAppAd;
 import com.startapp.android.publish.StartAppSDK;
 
@@ -44,9 +39,9 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 import static com.downtube.videos.fragments.FragmentDownloaded.SHOW_FOLDERS_GRID;
 import static com.downtube.videos.fragments.FragmentDownloaded.SHOW_FOLDER_CONTENT;
-import static com.downtube.videos.fragments.FragmentVimeoWebView.downloadEnabled;
+//import static com.downtube.videos.fragments.FragmentVimeoWebView.downloadEnabled;
 
-public class MainActivity extends AppCompatActivity implements InterstitialAdListener, ViewPager.OnPageChangeListener {
+public class MainActivity extends AppCompatActivity implements  ViewPager.OnPageChangeListener { //InterstitialAdListener,
 
     public static final String KEY_ASK_EXTERNAL_PERMISSION = "keyExPermission";
     public final static int CODE_STORAGE_PERMISSION = 100;
@@ -59,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements InterstitialAdLis
     public static String pathId;
     public ViewPager viewPager;
     private boolean fbBackPressed;
-    private InterstitialAd exitPressedInterstital;
+//    private InterstitialAd exitPressedInterstital;
 
     private ImageButton btnDownload;
     private WeakReference<WebView> webViewWeakReference;
@@ -68,9 +63,9 @@ public class MainActivity extends AppCompatActivity implements InterstitialAdLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         StartAppSDK.init(this, STARTAPP_ID, true);
-        exitPressedInterstital = new InterstitialAd(MainActivity.this, FACEBOOK_PLACEMENT_EXIT);
-        exitPressedInterstital.setAdListener(MainActivity.this);
-        StartAppAd.showSplash(this, savedInstanceState);
+//        exitPressedInterstital = new InterstitialAd(MainActivity.this, FACEBOOK_PLACEMENT_EXIT);
+//        exitPressedInterstital.setAdListener(MainActivity.this);
+//        StartAppAd.showSplash(this, savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
@@ -84,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements InterstitialAdLis
         registerReceiver(receiver, new IntentFilter(
                 DownloadManager.ACTION_DOWNLOAD_COMPLETE));
 
-        AdSettings.addTestDevice("8278fc45c192e519256cfe244e4e1f65");
+//        AdSettings.addTestDevice("8278fc45c192e519256cfe244e4e1f65");
     }
 
     @Override
@@ -95,9 +90,9 @@ public class MainActivity extends AppCompatActivity implements InterstitialAdLis
     @Override
     protected void onResume() {
         super.onResume();
-        if (!exitPressedInterstital.isAdLoaded()) {
-            exitPressedInterstital.loadAd();
-        }
+//        if (!exitPressedInterstital.isAdLoaded()) {
+//            exitPressedInterstital.loadAd();
+//        }
         boolean permission = ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
         if (permission) {
             if (viewPager.getAdapter() == null) {
@@ -132,27 +127,27 @@ public class MainActivity extends AppCompatActivity implements InterstitialAdLis
             viewPager.getAdapter().notifyDataSetChanged(); //it will refresh second fragment
         } else if (viewPager.getCurrentItem() == 1 && webViewWeakReference != null && webViewWeakReference.get() != null && webViewWeakReference.get().canGoBack()){
             webViewWeakReference.get().goBack();
-            downloadEnabled = false;
+            btnDownload.setEnabled(false);
         }
         else {
-            if (exitPressedInterstital.isAdLoaded()){
-                Log.d("TAG", "facebook shown BACK");
-                exitPressedInterstital.show();
-                fbBackPressed = true;
-            } else {
+//            if (exitPressedInterstital.isAdLoaded()){
+//                Log.d("TAG", "facebook shown BACK");
+//                exitPressedInterstital.show();
+//                fbBackPressed = true;
+//            } else {
                 Log.d("TAG", "startApp shown BACK");
                 StartAppAd.onBackPressed(this);
                 super.onBackPressed();
-            }
+//            }
         }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (exitPressedInterstital != null) {
-            exitPressedInterstital.destroy();
-        }
+//        if (exitPressedInterstital != null) {
+//            exitPressedInterstital.destroy();
+//        }
 
         unregisterReceiver(receiver);
     }
@@ -223,40 +218,40 @@ public class MainActivity extends AppCompatActivity implements InterstitialAdLis
     };
 
 
-
-    @Override
-    public void onInterstitialDisplayed(Ad ad) {
-
-    }
-
-    @Override
-    public void onInterstitialDismissed(Ad ad) {
-        if (fbBackPressed){
-            Log.d("TAG", "facebook onInterstitialDismissed");
-            fbBackPressed = false;
-            if (!isFinishing()){
-                finish();
-            }
-        }
-    }
-
-    @Override
-    public void onError(Ad ad, AdError adError) {
-        Log.d("TAG", "facebook onError");
-    }
-
-    @Override
-    public void onAdLoaded(Ad ad) {
-
-    }
-
-    @Override
-    public void onAdClicked(Ad ad) {
-        if (fbBackPressed){
-            fbBackPressed = false;
-            super.onBackPressed();
-        }
-    }
+//
+//    @Override
+//    public void onInterstitialDisplayed(Ad ad) {
+//
+//    }
+//
+//    @Override
+//    public void onInterstitialDismissed(Ad ad) {
+//        if (fbBackPressed){
+//            Log.d("TAG", "facebook onInterstitialDismissed");
+//            fbBackPressed = false;
+//            if (!isFinishing()){
+//                finish();
+//            }
+//        }
+//    }
+//
+//    @Override
+//    public void onError(Ad ad, AdError adError) {
+//        Log.d("TAG", "facebook onError");
+//    }
+//
+//    @Override
+//    public void onAdLoaded(Ad ad) {
+//
+//    }
+//
+//    @Override
+//    public void onAdClicked(Ad ad) {
+//        if (fbBackPressed){
+//            fbBackPressed = false;
+//            super.onBackPressed();
+//        }
+//    }
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
