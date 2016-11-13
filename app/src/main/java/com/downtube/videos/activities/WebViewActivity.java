@@ -22,13 +22,5 @@ public class WebViewActivity extends AppCompatActivity {
         mWebView.loadUrl("http://vuclip.com/w?cid=939349379&l=21339396&z=31406&frm=index.html");
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        Uri result = intent.getData();
-        String extension = MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(new File(intent.getData().getPath())).toString());
-//        MainActivity.downId = Utils.downloadFile(getApplicationContext(), result.toString(), URLUtil.guessFileName(intent.getData().toString(), null, null));
 
-
-    }
 }

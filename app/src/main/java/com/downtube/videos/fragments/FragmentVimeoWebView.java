@@ -49,7 +49,7 @@ public class FragmentVimeoWebView extends Fragment implements View.OnClickListen
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mWebView = (WebView) inflater.inflate(R.layout.fragment_web_view, container, false);
-        btnDownload = (ImageButton) getActivity().findViewById(R.id.btn_download_video);
+//        btnDownload = (ImageButton) getActivity().findViewById(R.id.btn_download_video);
         mWebView.getSettings().setJavaScriptEnabled(true);
         if (savedInstanceState != null && savedInstanceState.getString(DATA_SAVED) != null){
             mWebView.loadUrl(savedInstanceState.getString(DATA_SAVED));

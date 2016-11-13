@@ -14,59 +14,14 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.MainActivity">
-            <!--<intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>-->
-        </activity>
-        <activity
-            android:name=".activities.DownloadDialogActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/dialog_theme"/>
-        <activity
-            android:name=".activities.DeleteDialogActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/dialog_theme"/>
-        <activity
-            android:name=".activities.VimeoPlayerActivity"
-            android:screenOrientation="landscape"
-            android:theme="@style/fullScreen"/>
-        <activity android:name=".activities.FeedbackActivity"/>
-
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="648616db1fb4b35e79e045a0c05c83a38935e340"/>
-
-        <!-- StartApp -->
-        <activity
-            android:name="com.startapp.android.publish.list3d.List3DActivity"
-            android:theme="@android:style/Theme"/>
-        <activity
-            android:name="com.startapp.android.publish.OverlayActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:theme="@android:style/Theme.Translucent"/>
-        <activity
-            android:name="com.startapp.android.publish.FullScreenActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:theme="@android:style/Theme"/>
-
-        <!-- Facebook -->
-        <activity
-            android:name="com.facebook.ads.InterstitialAdActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"/>
-        <activity
-            android:name=".activities.WebViewActivity"
-            android:label="@string/title_activity_web_view"
-            android:theme="@style/AppTheme"
+        <activity android:name=".activities.MainActivity"
             android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT" />
@@ -197,7 +152,44 @@
                 <data android:pathPattern=".*\\.WTV" />
                 <data android:pathPattern=".*\\.XESC" />
             </intent-filter>
+
         </activity>
+        <activity
+            android:name=".activities.DownloadDialogActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/dialog_theme"/>
+        <activity
+            android:name=".activities.DeleteDialogActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/dialog_theme"/>
+        <activity
+            android:name=".activities.VimeoPlayerActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/fullScreen"/>
+        <activity android:name=".activities.FeedbackActivity"/>
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="648616db1fb4b35e79e045a0c05c83a38935e340"/>
+
+        <!-- StartApp -->
+        <activity
+            android:name="com.startapp.android.publish.list3d.List3DActivity"
+            android:theme="@android:style/Theme"/>
+        <activity
+            android:name="com.startapp.android.publish.OverlayActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@android:style/Theme.Translucent"/>
+        <activity
+            android:name="com.startapp.android.publish.FullScreenActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@android:style/Theme"/>
+
+       <!-- &lt;!&ndash; Facebook &ndash;&gt;
+        <activity
+            android:name="com.facebook.ads.InterstitialAdActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>-->
+
     </application>
 
 </manifest>

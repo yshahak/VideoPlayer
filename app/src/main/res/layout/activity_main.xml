@@ -30,13 +30,13 @@
             style="@style/FontMyriadProBoldCondensed"
             android:text="@string/app_name"/>
 
-        <ImageButton
+       <!-- <ImageButton
             android:id="@+id/btn_download_video"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:visibility="gone"
-            app:srcCompat="@drawable/btn_down_state"/>
+            app:srcCompat="@drawable/btn_down_state"/>-->
 
     </android.support.v7.widget.Toolbar>
 

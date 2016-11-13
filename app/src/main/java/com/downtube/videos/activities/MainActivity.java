@@ -22,11 +22,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
+import android.webkit.MimeTypeMap;
+import android.webkit.URLUtil;
 import android.webkit.WebView;
-import android.widget.ImageButton;
 
 import com.downtube.videos.R;
+import com.downtube.videos.Utils;
 import com.downtube.videos.adapters.CustomPagerAdapter;
 import com.downtube.videos.fragments.FragmentDownloaded;
 import com.startapp.android.publish.StartAppAd;
@@ -51,12 +52,12 @@ public class MainActivity extends AppCompatActivity implements  ViewPager.OnPage
 
 
     public static long downId;
-    public static String pathId;
+    public static String pathOfFile;
     public ViewPager viewPager;
     private boolean fbBackPressed;
 //    private InterstitialAd exitPressedInterstital;
 
-    private ImageButton btnDownload;
+//    private ImageButton btnDownload;
     private WeakReference<WebView> webViewWeakReference;
 
     @Override
@@ -71,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements  ViewPager.OnPage
         setSupportActionBar(toolbar);
         //noinspection ConstantConditions
         getSupportActionBar().setTitle(null);
-        btnDownload = (ImageButton) toolbar.findViewById(R.id.btn_download_video);
+//        btnDownload = (ImageButton) toolbar.findViewById(R.id.btn_download_video);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(viewPager);
@@ -127,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements  ViewPager.OnPage
             viewPager.getAdapter().notifyDataSetChanged(); //it will refresh second fragment
         } else if (viewPager.getCurrentItem() == 1 && webViewWeakReference != null && webViewWeakReference.get() != null && webViewWeakReference.get().canGoBack()){
             webViewWeakReference.get().goBack();
-            btnDownload.setEnabled(false);
+//            btnDownload.setEnabled(false);
         }
         else {
 //            if (exitPressedInterstital.isAdLoaded()){
@@ -187,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements  ViewPager.OnPage
                 Long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
                 if (downloadId == downId) {
                     Log.d("TAG", "reciever got the doownload complete");
-                    File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), pathId);
+                    File file = new File(Environment.getExternalStoragePublicDirectory(context.getString(R.string.app_name)), pathOfFile);
                     MediaScannerConnection.scanFile(getApplicationContext(), new String[]{
                                     file.getAbsolutePath()},
                             null, new MediaScannerConnection.OnScanCompletedListener() {
@@ -218,40 +219,17 @@ public class MainActivity extends AppCompatActivity implements  ViewPager.OnPage
     };
 
 
-//
-//    @Override
-//    public void onInterstitialDisplayed(Ad ad) {
-//
-//    }
-//
-//    @Override
-//    public void onInterstitialDismissed(Ad ad) {
-//        if (fbBackPressed){
-//            Log.d("TAG", "facebook onInterstitialDismissed");
-//            fbBackPressed = false;
-//            if (!isFinishing()){
-//                finish();
-//            }
-//        }
-//    }
-//
-//    @Override
-//    public void onError(Ad ad, AdError adError) {
-//        Log.d("TAG", "facebook onError");
-//    }
-//
-//    @Override
-//    public void onAdLoaded(Ad ad) {
-//
-//    }
-//
-//    @Override
-//    public void onAdClicked(Ad ad) {
-//        if (fbBackPressed){
-//            fbBackPressed = false;
-//            super.onBackPressed();
-//        }
-//    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent.getCategories().contains(Intent.CATEGORY_BROWSABLE)) {
+            Uri result = intent.getData();
+            String extension = MimeTypeMap.getFileExtensionFromUrl(Uri.fromFile(new File(intent.getData().getPath())).toString());
+            pathOfFile = URLUtil.guessFileName(intent.getData().toString(), null, null);
+            downId = Utils.downloadFile(getApplicationContext(), result.toString(), pathOfFile);
+        }
+    }
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -260,7 +238,7 @@ public class MainActivity extends AppCompatActivity implements  ViewPager.OnPage
 
     @Override
     public void onPageSelected(int position) {
-        btnDownload.setVisibility(position == 1 ? View.VISIBLE : View.GONE);
+//        btnDownload.setVisibility(position == 1 ? View.VISIBLE : View.GONE);
     }
 
     @Override

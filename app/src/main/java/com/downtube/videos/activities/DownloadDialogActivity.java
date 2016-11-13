@@ -91,8 +91,8 @@ public class DownloadDialogActivity extends AppCompatActivity implements View.On
         if (v.getId() == R.id.btn_yes) {
             boolean permission = ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
             if (permission) {
-                MainActivity.pathId = editText.getText().toString() + ".mp4";
-                MainActivity.downId = Utils.downloadFile(getApplicationContext(), arrayLinks.get(position), MainActivity.pathId);
+                MainActivity.pathOfFile = editText.getText().toString() + ".mp4";
+                MainActivity.downId = Utils.downloadFile(getApplicationContext(), arrayLinks.get(position), MainActivity.pathOfFile);
                 SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 int count = pref.getInt(KEY_STARTAPP_COUNT, 0);
                 if (count % 3 == 0) {

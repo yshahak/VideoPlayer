@@ -66,7 +66,7 @@ public class RecyclerAdapterVideoList extends RecyclerView.Adapter<RecyclerAdapt
                 } else {
                     Intent intent = new Intent();
                     intent.setAction(Intent.ACTION_VIEW);
-                    intent.setDataAndType(video.getVideoUri(), "video/mp4");
+                    intent.setData(video.getVideoUri());
                     itemView.getContext().startActivity(intent);
                 }
             }
