@@ -159,6 +159,7 @@ public class Utils {
     public static long downloadFile(Context context, String url, String fileName) {
         Log.d("TAG", "downloading: " + fileName);
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+
         request.setTitle(fileName);
         request.setDescription("Downloading from server");
         request.allowScanningByMediaScanner();

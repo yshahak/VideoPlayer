@@ -25,4 +25,5 @@
     <string name="permission_title">Permission request</string>
     <string name="permission_message">We need storage permission in order to save videos to your device and display your saved videos.</string>
     <string name="count_place_holder">%1$d Videos</string>
+    <string name="title_activity_web_view">WebViewActivity</string>
 </resources>
