@@ -19,7 +19,6 @@ import android.widget.Toast;
 
 import com.downtube.videos.R;
 import com.downtube.videos.Utils;
-import com.facebook.ads.InterstitialAd;
 import com.startapp.android.publish.StartAppAd;
 
 import java.util.ArrayList;
@@ -40,7 +39,7 @@ public class DownloadDialogActivity extends AppCompatActivity implements View.On
     private static final String KEY_STARTAPP_COUNT = "keyStartAppCOunt";
     private static final String FACEBOOK_PLACEMENT_DOWNLOADED = "1671180859802010_1671181003135329";
 
-    private InterstitialAd  downloadPressedInterstital;
+//    private InterstitialAd  downloadPressedInterstital;
     private EditText editText;
 
     private TypedArray ids;
@@ -52,8 +51,8 @@ public class DownloadDialogActivity extends AppCompatActivity implements View.On
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        downloadPressedInterstital = new InterstitialAd(this, FACEBOOK_PLACEMENT_DOWNLOADED);
-        downloadPressedInterstital.loadAd();
+//        downloadPressedInterstital = new InterstitialAd(this, FACEBOOK_PLACEMENT_DOWNLOADED);
+//        downloadPressedInterstital.loadAd();
         setContentView(R.layout.dialog_download);
         editText = (EditText)findViewById(R.id.edit_text_file_name);
         ids = getResources().obtainTypedArray(R.array.menu_ids);
@@ -97,11 +96,11 @@ public class DownloadDialogActivity extends AppCompatActivity implements View.On
                 SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                 int count = pref.getInt(KEY_STARTAPP_COUNT, 0);
                 if (count % 3 == 0) {
-                    if (downloadPressedInterstital.isAdLoaded()){
-                        downloadPressedInterstital.show();
-                    } else {
+//                    if (downloadPressedInterstital.isAdLoaded()){
+//                        downloadPressedInterstital.show();
+//                    } else {
                         StartAppAd.showAd(this);
-                    }
+//                    }
                 }
                 pref.edit().putInt(KEY_STARTAPP_COUNT, ++count).apply();
                 finish();
@@ -129,9 +128,9 @@ public class DownloadDialogActivity extends AppCompatActivity implements View.On
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (downloadPressedInterstital != null) {
-            downloadPressedInterstital.destroy();
-        }
+//        if (downloadPressedInterstital != null) {
+//            downloadPressedInterstital.destroy();
+//        }
 
     }
 }

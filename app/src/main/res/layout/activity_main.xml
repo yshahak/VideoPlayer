@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="right"
             android:visibility="gone"
-            app:srcCompat="@drawable/btn_download_blue"/>
+            app:srcCompat="@drawable/btn_down_state"/>
 
     </android.support.v7.widget.Toolbar>
 
