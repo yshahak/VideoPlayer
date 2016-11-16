@@ -24,24 +24,39 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 import com.downtube.videos.R;
+import com.downtube.videos.Utils;
 import com.downtube.videos.adapters.CustomPagerAdapter;
 import com.downtube.videos.fragments.FragmentDownloaded;
-import com.facebook.ads.Ad;
-import com.facebook.ads.AdError;
-import com.facebook.ads.AdSettings;
-import com.facebook.ads.InterstitialAd;
-import com.facebook.ads.InterstitialAdListener;
+import com.downtube.videos.vine.ProcessingListener;
+import com.downtube.videos.vine.ProcessingThread;
+import com.downtube.videos.vine.TweetBuffer;
+import com.downtube.videos.vine.TwitterStreamBuilderUtil;
+import com.downtube.videos.vine.VineUtil;
 import com.startapp.android.publish.StartAppAd;
 import com.startapp.android.publish.StartAppSDK;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
 
+import twitter4j.FilterQuery;
+import twitter4j.Query;
+import twitter4j.QueryResult;
+import twitter4j.StallWarning;
+import twitter4j.Status;
+import twitter4j.StatusDeletionNotice;
+import twitter4j.StatusListener;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
+import twitter4j.TwitterStream;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 import static com.downtube.videos.fragments.FragmentDownloaded.SHOW_FOLDERS_GRID;
 import static com.downtube.videos.fragments.FragmentDownloaded.SHOW_FOLDER_CONTENT;
 
-public class MainActivity extends AppCompatActivity implements InterstitialAdListener {
+public class MainActivity extends AppCompatActivity {
 
     public static final String KEY_ASK_EXTERNAL_PERMISSION = "keyExPermission";
     public final static int CODE_STORAGE_PERMISSION = 100;
@@ -54,14 +69,22 @@ public class MainActivity extends AppCompatActivity implements InterstitialAdLis
     public static String pathId;
     public ViewPager viewPager;
     private boolean fbBackPressed;
-    private InterstitialAd exitPressedInterstital;
+
+    private static final int NUM_VINES_TO_DOWNLOAD = -1;
+    private static final int MIN_BUFFER_SIZE = 10;
+
+    private static TwitterStream twitter;
+    private static int numVinesScraped = 0;
+    private static final String SAVE_DIRECTORY = "vines/";
+
+    private static TweetBuffer buffer1, buffer2;
+    private static int currentBufferId;
+    private static HashSet<String> duplicateUrls;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         StartAppSDK.init(this, STARTAPP_ID, true);
-        exitPressedInterstital = new InterstitialAd(MainActivity.this, FACEBOOK_PLACEMENT_EXIT);
-        exitPressedInterstital.setAdListener(MainActivity.this);
         StartAppAd.showSplash(this, savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
@@ -74,8 +97,126 @@ public class MainActivity extends AppCompatActivity implements InterstitialAdLis
         tabLayout.setupWithViewPager(viewPager);
         registerReceiver(receiver, new IntentFilter(
                 DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+//        Connects to the Streaming API
+        TwitterStream twitter = TwitterStreamBuilderUtil.getStream();
 
-        AdSettings.addTestDevice("8278fc45c192e519256cfe244e4e1f65");
+        // sets keyword to track
+        FilterQuery fq = new FilterQuery();
+        String keyword[] = { "http" };
+        fq.track(keyword);
+
+        // instantiates buffers
+        File file = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_MOVIES), SAVE_DIRECTORY);
+        buffer1 = new TweetBuffer(1, file);
+        buffer2 = new TweetBuffer(2, file);
+        currentBufferId = 1;
+
+        duplicateUrls = new HashSet<>();
+
+        // instantiates listener to fill and process the buffers
+        StatusListener listener = new StatusListener() {
+
+            @Override
+            public void onStatus(Status status) {
+
+                if ((currentBufferId == 1) && !buffer1.isProcessing()) {
+                    buffer1.addStatus(status);
+                    return;
+                }
+
+                if ((currentBufferId == 2) && !buffer2.isProcessing()) {
+                    buffer2.addStatus(status);
+                    return;
+                }
+            }
+
+            @Override
+            public void onTrackLimitationNotice(int numberOfLimitedStatuses) {
+                processCurrentBuffer(MainActivity.this); // see Step 4
+            }
+
+            @Override
+            public void onDeletionNotice(StatusDeletionNotice deletionNotice) {
+            }
+
+            @Override
+            public void onException(Exception ex) {
+                ex.printStackTrace();
+            }
+
+            @Override
+            public void onScrubGeo(long arg0, long arg1) {
+            }
+
+            @Override
+            public void onStallWarning(StallWarning arg0) {
+                System.out.println(arg0.getMessage());
+            }
+        };
+
+//        // starts scraping Vine videos
+//        twitter.addListener(listener);
+//        twitter.filter(fq);
+
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+
+                    // sets keyword to track
+                    FilterQuery fq = new FilterQuery();
+                    String keyword[] = {"nba"};
+                    fq.track(keyword);
+
+                    TwitterFactory tf = new TwitterFactory(TwitterStreamBuilderUtil.getBuilder().build());
+                    Twitter twitter = tf.getInstance();
+                    Query query = new Query("dunk vine");
+                    QueryResult result;
+                    result = twitter.search(query);
+                    List<Status> tweets = result.getTweets();
+                    String url, downloadUrl;
+                    String html = null;
+
+                    for (Status status : tweets) {
+                        Log.d("TAG", "@" + status.getUser().getScreenName() + " - " + status.getText());
+                        // gets the Vine URL (eg: https://vine.co/v/OW0ei1Uauxv)
+                        url = VineUtil.findVineUrl(status);
+                        if (url == null) {
+                            continue;
+                        }
+                        // gets HTML from Vine URL
+                        try {
+                            html = VineUtil.sendGet(url);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        if (html == null) {
+                            continue;
+                        }
+
+                        // parses out the download URL
+                        downloadUrl = VineUtil.parseDownloadUrl(html);
+                        if (downloadUrl == null) {
+                            continue;
+                        }
+
+                        // downloads the .mp4 video
+//            if (VineUtil.downloadVine(saveDirectory, status.getId(),
+//                    downloadUrl)) {
+                        MainActivity.pathId = status.getId()  + ".mp4";
+                        Log.d("TAG", "downloading: " + status.getText());
+                        MainActivity.downId = Utils.downloadFile(MainActivity.this, downloadUrl, status.getId()  + ".mp4");
+                    }
+
+                } catch (TwitterException te) {
+                    te.printStackTrace();
+                    System.out.println("Failed to search tweets: " + te.getMessage());
+                }
+            }
+        }).start();
+
     }
 
     @Override
@@ -86,9 +227,6 @@ public class MainActivity extends AppCompatActivity implements InterstitialAdLis
     @Override
     protected void onResume() {
         super.onResume();
-        if (!exitPressedInterstital.isAdLoaded()) {
-            exitPressedInterstital.loadAd();
-        }
         boolean permission = ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
         if (permission) {
             if (viewPager.getAdapter() == null) {
@@ -122,24 +260,16 @@ public class MainActivity extends AppCompatActivity implements InterstitialAdLis
             FragmentDownloaded.state = SHOW_FOLDERS_GRID;
             viewPager.getAdapter().notifyDataSetChanged(); //it will refresh second fragment
         } else {
-            if (exitPressedInterstital.isAdLoaded()){
-                Log.d("TAG", "facebook shown BACK");
-                exitPressedInterstital.show();
-                fbBackPressed = true;
-            } else {
-                Log.d("TAG", "startApp shown BACK");
-                StartAppAd.onBackPressed(this);
-                super.onBackPressed();
-            }
+            Log.d("TAG", "startApp shown BACK");
+            StartAppAd.onBackPressed(this);
+            super.onBackPressed();
         }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (exitPressedInterstital != null) {
-            exitPressedInterstital.destroy();
-        }
+
 
         unregisterReceiver(receiver);
     }
@@ -209,39 +339,79 @@ public class MainActivity extends AppCompatActivity implements InterstitialAdLis
         }
     };
 
+    private static void processCurrentBuffer(Context context) {
 
+        // Does nothing if the current buffer is already processing or
+        // if it contains fewer elements than the minimum buffer size.
+        if ((currentBufferId == 1 && (buffer1.isProcessing() || buffer1
+                .getTweets().size() < MIN_BUFFER_SIZE))
+                || (currentBufferId == 2 && (buffer2.isProcessing() || buffer2
+                .getTweets().size() < MIN_BUFFER_SIZE))) {
+            return;
+        }
 
-    @Override
-    public void onInterstitialDisplayed(Ad ad) {
+        // Otherwise, begin processing the current buffer.
+        try {
+            switch (currentBufferId) {
+                case 1:
+                    buffer1.setProcessing(true);
+                    currentBufferId = 2;
 
+                    Thread t1 = new Thread(new ProcessingThread(buffer1,
+                            duplicateUrls, finishListener, context));
+                    t1.start();
+                    break;
+
+                case 2:
+                    buffer2.setProcessing(true);
+                    currentBufferId = 1;
+
+                    Thread t2 = new Thread(new ProcessingThread(buffer2,
+                            duplicateUrls, finishListener, context));
+                    t2.start();
+                    break;
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
     }
 
-    @Override
-    public void onInterstitialDismissed(Ad ad) {
-        if (fbBackPressed){
-            Log.d("TAG", "facebook onInterstitialDismissed");
-            fbBackPressed = false;
-            if (!isFinishing()){
-                finish();
+    private static ProcessingListener finishListener = new ProcessingListener() {
+
+        @Override
+        public void onProcessFinished(int bufferId, HashSet<String> urls,
+                                      int numScraped) {
+
+            synchronized (this) {
+                duplicateUrls = urls;
+            }
+
+            numVinesScraped += numScraped;
+            if (numScraped != 0) {
+                System.out.println("Scraped " + numScraped
+                        + " vine(s) from buffer" + bufferId
+                        + ".  Total vines is now " + numVinesScraped + ".");
+            }
+
+            switch (bufferId) {
+                case 1:
+                    buffer1.clearBuffer();
+                    buffer1.setProcessing(false);
+                    break;
+                case 2:
+                    buffer2.clearBuffer();
+                    buffer2.setProcessing(false);
+                    break;
+            }
+
+            // stop scraping when threshold is reached
+            if (numVinesScraped >= NUM_VINES_TO_DOWNLOAD
+                    && (NUM_VINES_TO_DOWNLOAD != -1)) {
+                twitter.cleanUp();
+                twitter.shutdown();
             }
         }
-    }
+    };
 
-    @Override
-    public void onError(Ad ad, AdError adError) {
-        Log.d("TAG", "facebook onError");
-    }
 
-    @Override
-    public void onAdLoaded(Ad ad) {
-
-    }
-
-    @Override
-    public void onAdClicked(Ad ad) {
-        if (fbBackPressed){
-            fbBackPressed = false;
-            super.onBackPressed();
-        }
-    }
 }

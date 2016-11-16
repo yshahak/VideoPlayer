@@ -48,7 +48,10 @@ dependencies {
         transitive = true;
     }
     compile files('libs/StartAppInApp-3.4.3.jar')
-    compile 'com.facebook.android:audience-network-sdk:4.+'
+//    compile 'com.facebook.android:audience-network-sdk:4.17.0'
     compile 'com.flurry.android:analytics:6.5.0'
-//    compile 'com.github.axet:vget:1.1.34'
+    compile 'org.twitter4j:twitter4j-stream:4.0.2'
+    compile 'org.twitter4j:twitter4j-core:4.0.2'
+
+    compile group: 'commons-io', name: 'commons-io', version: '2.4'
 }
