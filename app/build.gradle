@@ -54,4 +54,9 @@ dependencies {
     compile 'org.twitter4j:twitter4j-core:4.0.2'
 
     compile group: 'commons-io', name: 'commons-io', version: '2.4'
+    compile('com.twitter.sdk.android:twitter:2.2.0@aar') {
+        transitive = true;
+    }
+    compile 'com.squareup.okhttp3:logging-interceptor:3.0.1'
+
 }

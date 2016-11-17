@@ -51,6 +51,26 @@ public class VineUtil {
         }
     }
 
+    public static String parseThumbUrl(String html) {
+
+        // if 404 or the url suffix is missing from the html
+        if (html == null || html.contains("Page not found") ){
+            //	|| html.contains("<title>Vine</title>")) {
+            return null;
+        }
+
+        // parses out the .mp4 file path
+        try {
+            String[] split = html.split("twitter:image:src\" content=\"");
+            split = split[1].split("\">");
+            return split[0];
+
+        } catch (ArrayIndexOutOfBoundsException e1) {
+            return null;
+        }
+    }
+
+
     public static boolean downloadVine(File saveDirectory, long id,
                                        String downloadUrl) {
         try {

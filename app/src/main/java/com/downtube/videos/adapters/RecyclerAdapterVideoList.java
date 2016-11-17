@@ -2,6 +2,7 @@ package com.downtube.videos.adapters;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,12 +10,13 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 import com.downtube.videos.R;
+import com.downtube.videos.Utils;
 import com.downtube.videos.Video;
 import com.downtube.videos.activities.DeleteDialogActivity;
 import com.downtube.videos.fragments.FragmentDownloaded;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -99,10 +101,14 @@ public class RecyclerAdapterVideoList extends RecyclerView.Adapter<RecyclerAdapt
 
                     @Override
                     public void onError() {
-                        videos.remove(video);
+                        String path = video.getPathToFile();
+                        Utils.deleteFile(path);
+                        Uri uri = Uri.parse(video.getVideoUri().toString());
+                        holder.itemView.getContext().getContentResolver().delete(uri, null, null);
                         holder.itemView.post(new Runnable() {
                             @Override
                             public void run() {
+                                videos.remove(video);
                                 notifyDataSetChanged();
                             }
                         });
@@ -110,10 +116,14 @@ public class RecyclerAdapterVideoList extends RecyclerView.Adapter<RecyclerAdapt
                 });
         String videoName = video.getVideoName();
         if (videoName == null) {
-            videos.remove(video);
+            String path = video.getPathToFile();
+            Utils.deleteFile(path);
+            Uri uri = Uri.parse(video.getVideoUri().toString());
+            holder.itemView.getContext().getContentResolver().delete(uri, null, null);
             holder.itemView.post(new Runnable() {
                 @Override
                 public void run() {
+                    videos.remove(video);
                     notifyDataSetChanged();
                 }
             });

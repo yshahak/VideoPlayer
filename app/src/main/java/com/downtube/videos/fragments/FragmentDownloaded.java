@@ -42,7 +42,7 @@ public class FragmentDownloaded extends Fragment {
 
     public static int state = SHOW_FOLDERS_GRID;
     public static Video removedVideo;
-    private static int lastIndex = -1;
+    public static int lastIndex = -1;
 
     public static FragmentDownloaded newInstance(int page){
         return new FragmentDownloaded();
