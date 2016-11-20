@@ -6,7 +6,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import com.downtube.videos.fragments.FragmentDownloaded;
 import com.downtube.videos.fragments.FragmentMenu;
-import com.downtube.videos.fragments.FragmentWebView;
 
 /**
  * Created by B.E.L on 01/09/2016.
@@ -23,10 +22,10 @@ public class CustomPagerAdapter extends FragmentPagerAdapter {
         switch (position){
             case 0:
                 return FragmentMenu.newInstance(position);
-            case 1:
-                return new FragmentWebView();
+//            case 1:
+//                return new FragmentWebView();
 //                return VimeoFragment.newInstance(position);
-            case 2:
+            case 1:
                 return FragmentDownloaded.newInstance(position);
         }
         return null;
@@ -42,7 +41,7 @@ public class CustomPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 3;
+        return 2;
     }
 
     @Override
@@ -50,9 +49,9 @@ public class CustomPagerAdapter extends FragmentPagerAdapter {
         switch (position){
             case 0:
                 return "MENU";
+//            case 1:
+//                return "VIDEO";
             case 1:
-                return "VIDEO";
-            case 2:
                 return "DOWNLOADS";
         }
         return null;

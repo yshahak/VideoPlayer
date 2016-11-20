@@ -15,6 +15,7 @@
     <string name="are_you_sure">Are you sure you want to delete the file?</string>
     <string name="delete_completed">FILE SUCCESSFULLY DELETED!</string>
     <string name="help">Search for videos, press on a video to play it or click the download button to download it.</string>
+    <string name="help_vuclip">Search for downloadable videos in any available site, like www.vuclip.com, and select "open with DownTube" in the dialog</string>
     <string name="title_feedback">Feedback</string>
     <string name="feedback_description"><b>Tell us what you think</b>\n\nyour opinion matters to us.\nPlease share your feedback\nso we can make your experience better</string>
     <string name="feedback_description_email"><b>Enter email address</b></string>

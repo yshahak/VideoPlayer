@@ -87,7 +87,7 @@ public class FragmentMenu extends Fragment implements View.OnClickListener {
     private void showHelpDiaolog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Help");
-        builder.setMessage(getString(R.string.help));
+        builder.setMessage(getString(R.string.help_vuclip));
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
