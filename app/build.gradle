@@ -50,13 +50,15 @@ dependencies {
     compile files('libs/StartAppInApp-3.4.3.jar')
 //    compile 'com.facebook.android:audience-network-sdk:4.17.0'
     compile 'com.flurry.android:analytics:6.5.0'
-    compile 'org.twitter4j:twitter4j-stream:4.0.2'
-    compile 'org.twitter4j:twitter4j-core:4.0.2'
+//    compile 'org.twitter4j:twitter4j-stream:4.0.2'
+//    compile 'org.twitter4j:twitter4j-core:4.0.2'
 
-    compile group: 'commons-io', name: 'commons-io', version: '2.4'
+//    compile group: 'commons-io', name: 'commons-io', version: '2.4'
     compile('com.twitter.sdk.android:twitter:2.2.0@aar') {
         transitive = true;
     }
-    compile 'com.squareup.okhttp3:logging-interceptor:3.0.1'
-
+//    compile 'com.squareup.okhttp3:logging-interceptor:3.3.0'
+//    compile 'com.squareup.okhttp3:okhttp:3.3.0'
+//    compile 'com.squareup.retrofit2:retrofit:2.0.2'
+//    compile 'com.squareup.retrofit2:converter-gson:2.0.2'
 }

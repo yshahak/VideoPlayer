@@ -5,184 +5,149 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v4.app.ListFragment;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
+import android.widget.ListView;
 
-import com.downtube.videos.DividerItemDecoration;
 import com.downtube.videos.R;
 import com.downtube.videos.Utils;
-import com.downtube.videos.adapters.RecyclerAdapterVine;
-import com.downtube.videos.vine.TwitterStreamBuilderUtil;
+import com.downtube.videos.activities.MainActivity;
+import com.downtube.videos.vine.CompactTweetViewCustom;
 import com.downtube.videos.vine.VineUtil;
-import com.downtube.videos.vine.VineVideo;
+import com.twitter.sdk.android.core.models.Tweet;
+import com.twitter.sdk.android.tweetui.BaseTweetView;
+import com.twitter.sdk.android.tweetui.SearchTimeline;
+import com.twitter.sdk.android.tweetui.TweetTimelineListAdapter;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import twitter4j.Query;
-import twitter4j.QueryResult;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
 
 /**
  * Created by B.E.L on 17/11/2016.
  */
 
-public class Vinefragment extends Fragment implements View.OnClickListener {
+public class Vinefragment extends ListFragment implements View.OnClickListener {
 
-    private static final String DATA_SAVED = "dataSaved";
-
-    private RecyclerView recyclerView;
-    private ProgressBar progressBar;
-    private View noInternetContainer;
+    private String SEARCH_QUERY_PREFIX = "";
+    private View loading;
 
     public static Fragment newInstance(int position) {
         return new Vinefragment();
     }
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable final Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_vimeo, container, false);
-        recyclerView = (RecyclerView) view.findViewById(R.id.recycler);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        runQuery();
+    }
 
-        progressBar = (ProgressBar)view.findViewById(R.id.progress_indicator);
-        SearchView mSearchView = (SearchView) view.findViewById(R.id.searchview);
-        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        ViewGroup view = (ViewGroup) inflater.inflate(R.layout.fragment_tweets_list, container, false);
+        loading = view.findViewById(R.id.loading);
+        ((ListView)view.findViewById(android.R.id.list)).setEmptyView(loading);
+        SearchView searchView = (SearchView)view.findViewById(R.id.searchview);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                new SearchVineTask().execute(query);
+                SEARCH_QUERY_PREFIX = query;
+                runQuery();
                 return true;
             }
 
             @Override
-            public boolean onQueryTextChange(String query) {
+            public boolean onQueryTextChange(String newText) {
                 return false;
             }
-
         });
-        noInternetContainer = view.findViewById(R.id.no_internet_container);
-        noInternetContainer.setOnClickListener(this);
-        if (savedInstanceState == null) {
-            setUiState();
-        }
         return view;
     }
 
-    private void setUiState() {
-        boolean connected = Utils.isNetworkAvailable(getContext());
-        noInternetContainer.setVisibility(connected ? View.GONE : View.VISIBLE);
-        progressBar.setVisibility(connected ? View.VISIBLE : View.GONE);
-        recyclerView.setVisibility(connected ? View.VISIBLE : View.GONE);
-        if (connected) {
-            new SearchVineTask().execute("goat");
+    private void runQuery(){
+        String SEARCH_QUERY_ENDFIX = " AND filter:vine";
+        final SearchTimeline searchTimeline = new SearchTimeline.Builder().query(SEARCH_QUERY_PREFIX +
+                SEARCH_QUERY_ENDFIX).build();
+
+        final TweetTimelineListAdapter adapter = new TweetTimelineListAdapter(getContext(), searchTimeline) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View rowView = convertView;
+                final Tweet tweet = getItem(position);
+                View btnDownload;
+                if (rowView == null) {
+                    rowView = new CompactTweetViewCustom(context, tweet, R.style.tw__TweetLightStyle);
+                    btnDownload = rowView.findViewById(R.id.btn_download);
+                    btnDownload.setOnClickListener(Vinefragment.this);
+                } else {
+                    ((BaseTweetView) rowView).setTweet(tweet);
+                    btnDownload = rowView.findViewById(R.id.btn_download);
+                }
+                btnDownload.setTag(tweet);
+                return rowView;
+            }
+        };
+        setListAdapter(adapter);
+    }
+
+
+    @Override
+    public void onClick(View v) {
+        Tweet tweet = (Tweet)v.getTag();
+        if (tweet != null) {
+            String url;
+            // gets the Vine URL (eg: https://vine.co/v/OW0ei1Uauxv)
+            if (tweet.entities.urls.size() == 0){
+                return;
+            }
+            url = tweet.entities.urls.get(0).expandedUrl;
+
+            if (url == null) {
+                return;
+            }
+            new SearchVineTask().execute(url);
         }
     }
 
-
-    private void setRecyclerViewState(List<VineVideo> list){
-        progressBar.setVisibility(View.GONE);
-        RecyclerAdapterVine adapterVine = (RecyclerAdapterVine) recyclerView.getAdapter();
-        if (adapterVine != null) {
-            adapterVine.setVideoList(list);
-        } else {
-            recyclerView.setAdapter(new RecyclerAdapterVine(getActivity(), list));
-        }
-    }
-
-    @Override
-    public void onClick(View view) {
-        setUiState();
-    }
-
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putBoolean(DATA_SAVED, true);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
-
-
-    class SearchVineTask extends AsyncTask<String, Void, List<VineVideo>>{
+    class SearchVineTask extends AsyncTask<String, Void, Void> {
 
         @Override
-        protected List<VineVideo> doInBackground(String... params) {
+        protected void onPreExecute() {
+            loading.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected Void doInBackground(String... params) {
+
+            String downloadUrl;
+            String html = null;
+
             try {
-                TwitterFactory tf = new TwitterFactory(TwitterStreamBuilderUtil.getBuilder().build());
-                Twitter twitter = tf.getInstance();
-                Query query = new Query(params[0] + " filter:vine");
-
-                QueryResult result = twitter.search(query);
-                List<twitter4j.Status> tweets = result.getTweets();
-                String url, downloadUrl;
-                String html = null;
-                HashMap<String, VineVideo> urls = new HashMap<>();
-                for (twitter4j.Status status : tweets) {
-                    // gets the Vine URL (eg: https://vine.co/v/OW0ei1Uauxv)
-                    url = VineUtil.findVineUrl(status);
-
-                    if (url == null) {
-                        continue;
-                    }
-                    // gets HTML from Vine URL
-                    try {
-                        html = VineUtil.sendGet(url);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    if (html == null) {
-                        continue;
-                    }
-                    // parses out the download URL
-                    downloadUrl = VineUtil.parseDownloadUrl(html);
-                    if (downloadUrl == null) {
-                        continue;
-                    }
-                    String id = Uri.parse(url).getLastPathSegment();
-
-                    if (urls.get(id) == null){
-                        Log.d("TAG", " url: " + url );
-                        Log.d("TAG", "id: " +id + " . url: " + downloadUrl );
-                        Log.d("TAG", "thumb: " + VineUtil.parseThumbUrl(html));
-                        VineVideo vineVideo = new VineVideo();
-                        vineVideo.setId(id);
-                        vineVideo.setVinePageUrl(url);
-                        vineVideo.setVineThumbUrl(VineUtil.parseThumbUrl(html));
-                        vineVideo.setVineStreamUrl(downloadUrl);
-                        urls.put(id, vineVideo);
-                    }
-                    return new ArrayList<>(urls.values());
-                }
-
-            } catch (TwitterException te) {
-                te.printStackTrace();
-                System.out.println("Failed to search tweets: " + te.getMessage());
+                html = VineUtil.sendGet(params[0]);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (html == null) {
                 return null;
             }
+            // parses out the download URL
+            downloadUrl = VineUtil.parseDownloadUrl(html);
+            if (downloadUrl == null) {
+                return null;
+            }
+
+            String id = Uri.parse(params[0]).getLastPathSegment();
+            MainActivity.pathId = id  + ".mp4";
+//            Log.d("TAG", "downloading: " + MainActivity.pathId );
+            MainActivity.downId = Utils.downloadFile(getContext(), downloadUrl, MainActivity.pathId);
             return null;
         }
 
         @Override
-        protected void onPostExecute(List<VineVideo> vineVideos) {
-            setRecyclerViewState(vineVideos);
+        protected void onPostExecute(Void aVoid) {
+            loading.setVisibility(View.GONE);
         }
     }
-
 }

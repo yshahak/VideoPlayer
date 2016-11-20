@@ -65,6 +65,9 @@
 
 # Fabric
 -keepattributes SourceFile,LineNumberTable,*Annotation*
+-dontwarn io.fabric.sdk.android.services.**
+
+
 -keep class com.crashlytics.android.**
 
 #StartApp
@@ -98,6 +101,10 @@
 -keepnames class * implements android.os.Parcelable {
    public static final ** CREATOR;
 }
+
+#Solve  can't find referenced method 'float getBatteryLevel(android.content.Context)' in program class io.fabric.sdk.android.services.common.CommonUtils
+# http://stackoverflow.com/questions/36425075/error-while-making-signed-apk-after-enabling-the-proguard-in-android-studio
+-keep public class android.util.FloatMath
 
 -keepattributes Exceptions, InnerClasses, Signature, Deprecated, SourceFile, LineNumberTable, *Annotation*, EnclosingMethod
 -dontwarn android.webkit.JavascriptInterface

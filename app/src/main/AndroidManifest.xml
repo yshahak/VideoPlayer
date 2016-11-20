@@ -17,7 +17,9 @@
         tools:replace="android:supportsRtl"
         android:theme="@style/AppTheme">
 
-        <activity android:name="com.downtube.videos.activities.SplashScreen">
+        <activity android:name="com.downtube.videos.activities.SplashScreen"/>
+
+        <activity android:name=".vine.VineActivity">
 
         </activity>
 

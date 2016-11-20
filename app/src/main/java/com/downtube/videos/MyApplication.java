@@ -1,22 +1,13 @@
 package com.downtube.videos;
 
 import android.app.Application;
-import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 import com.flurry.android.FlurryAgent;
 import com.twitter.sdk.android.Twitter;
-import com.twitter.sdk.android.core.TwitterApiClient;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
-import com.twitter.sdk.android.core.TwitterCore;
-import com.twitter.sdk.android.core.TwitterSession;
-import com.twitter.sdk.android.core.models.Tweet;
-import com.twitter.sdk.android.tweetui.SearchTimeline;
-import com.twitter.sdk.android.tweetui.TweetTimelineListAdapter;
 
 import io.fabric.sdk.android.Fabric;
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
  * Created by B.E.L on 11/09/2016.
@@ -36,23 +27,22 @@ public class MyApplication extends Application {
         TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
         twitter = new Twitter(authConfig);
         Fabric.with(this, new Crashlytics(), twitter);
-        final HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
-        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
-        final OkHttpClient customClient = new OkHttpClient.Builder()
-                .addInterceptor(loggingInterceptor).build();
-
-        final TwitterSession activeSession = TwitterCore.getInstance()
-                .getSessionManager().getActiveSession();
-
-        final TwitterApiClient customApiClient;
-        if (activeSession != null) {
-            customApiClient = new TwitterApiClient(activeSession);
-            TwitterCore.getInstance().addApiClient(activeSession, customApiClient);
-        } else {
-            customApiClient = new TwitterApiClient(customClient);
-            TwitterCore.getInstance().addGuestApiClient(customApiClient);
-        }
-        setUpPopularList();
+//        final HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+//        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BASIC);
+//        final OkHttpClient customClient = new OkHttpClient.Builder()
+//                .addInterceptor(loggingInterceptor).build();
+//
+//        final TwitterSession activeSession = TwitterCore.getInstance()
+//                .getSessionManager().getActiveSession();
+//
+//        final TwitterApiClient customApiClient;
+//        if (activeSession != null) {
+//            customApiClient = new TwitterApiClient(activeSession);
+//            TwitterCore.getInstance().addApiClient(activeSession, customApiClient);
+//        } else {
+//            customApiClient = new TwitterApiClient(customClient);
+//            TwitterCore.getInstance().addGuestApiClient(customApiClient);
+//        }
         new FlurryAgent.Builder()
                 .withLogEnabled(false)
                 .withContinueSessionMillis(5000L)
@@ -66,18 +56,8 @@ public class MyApplication extends Application {
 //        );
     }
 
-    private static final String SEARCH_QUERY = "#cannonballapp AND pic.twitter.com AND " +
-            "(#adventure OR #nature OR #romance OR #mystery)";
 
-    private void setUpPopularList() {
-        SearchTimeline searchTimeline = new SearchTimeline.Builder().query(SEARCH_QUERY).build();
 
-        final TweetTimelineListAdapter timelineAdapter = new TweetTimelineListAdapter(this, searchTimeline);
-        for (int i = 0 ; i < timelineAdapter.getCount() ; i++){
-            Tweet twitter = timelineAdapter.getItem(i);
-            Log.d("TAG", " tweet: " + twitter.toString() );
-        }
-    }
 
 
 }

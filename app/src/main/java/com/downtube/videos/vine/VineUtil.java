@@ -1,36 +1,29 @@
 package com.downtube.videos.vine;
 
-import org.apache.commons.io.FileUtils;
-
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-
-import twitter4j.Status;
-import twitter4j.URLEntity;
 /**
  * Created by B.E.L on 16/11/2016.
  */
 
 public class VineUtil {
-
-    public static String findVineUrl(Status status) {
-
-        String vineUrl;
-
-        for (URLEntity url : status.getURLEntities()) {
-            if (url.getExpandedURL().contains("vine.co/v/")) {
-                vineUrl = url.getExpandedURL();
-                return vineUrl;
-            }
-        }
-
-        return null;
-    }
+//
+//    public static String findVineUrl(Status status) {
+//
+//        String vineUrl;
+//
+//        for (URLEntity url : status.getURLEntities()) {
+//            if (url.getExpandedURL().contains("vine.co/v/")) {
+//                vineUrl = url.getExpandedURL();
+//                return vineUrl;
+//            }
+//        }
+//
+//        return null;
+//    }
 
     public static String parseDownloadUrl(String html) {
 
@@ -71,20 +64,20 @@ public class VineUtil {
     }
 
 
-    public static boolean downloadVine(File saveDirectory, long id,
-                                       String downloadUrl) {
-        try {
-            File f = new File(saveDirectory,  id + ".mp4");
-            FileUtils.copyURLToFile(new URL(downloadUrl), f);
-            return true;
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            return false;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
+//    public static boolean downloadVine(File saveDirectory, long id,
+//                                       String downloadUrl) {
+//        try {
+//            File f = new File(saveDirectory,  id + ".mp4");
+//            FileUtils.copyURLToFile(new URL(downloadUrl), f);
+//            return true;
+//        } catch (MalformedURLException e) {
+//            e.printStackTrace();
+//            return false;
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            return false;
+//        }
+//    }
 
     private final static String USER_AGENT = "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/37.0.2049.0 Safari/537.36";
 
